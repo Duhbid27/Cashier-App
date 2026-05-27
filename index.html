@@ -133,26 +133,41 @@
             background-color: #374151;
             border-radius: 8px;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            border-left: 5px solid #2563eb;
         }
 
         .cart-item-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
         }
 
         .cart-controls {
             display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Top row controls: Basic adjustments */
+        .control-row-main {
+            display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Gigantic action buttons for adjustments */
+        /* Bottom row controls: Quick fractional selectors */
+        .fraction-row {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+        }
+
+        /* Gigantic action buttons for basic adjustments */
         .qty-btn {
             width: 55px;
             height: 55px;
@@ -167,6 +182,22 @@
         .qty-btn.plus { background-color: #10b981; }
         .qty-btn.minus { background-color: #f59e0b; }
         
+        /* Specialized fractional increment buttons */
+        .frac-btn {
+            flex: 1;
+            padding: 10px 4px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #4b5563;
+            color: #ffffff;
+            border: 2px solid #6b7280;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .frac-btn:active {
+            background-color: #374151;
+        }
+
         .delete-btn {
             background-color: #ef4444;
             color: white;
@@ -179,10 +210,11 @@
         }
 
         .item-qty-display {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
-            min-width: 40px;
+            min-width: 60px;
             text-align: center;
+            color: #fca5a5;
         }
 
         /* Sticky Footer Total Counter */
@@ -342,7 +374,7 @@
             var found = false;
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].id === id) {
-                    cart[i].qty++;
+                    cart[i].qty = parseFloat((cart[i].qty + 1).toFixed(2));
                     found = true;
                     break;
                 }
@@ -360,18 +392,18 @@
                         id: product.id,
                         name: product.name,
                         price: product.price,
-                        qty: 1
+                        qty: 1.00
                     });
                 }
             }
             updateCartUI();
         }
 
-        // Adjust entry volumes up or down
+        // Adjust entry volumes up or down safely controlling fractional bounds
         function changeQty(id, delta) {
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].id === id) {
-                    cart[i].qty += delta;
+                    cart[i].qty = parseFloat((cart[i].qty + delta).toFixed(2));
                     if (cart[i].qty <= 0) {
                         cart.splice(i, 1);
                     }
@@ -416,10 +448,18 @@
                         '<span>₱' + itemCost.toFixed(2) + '</span>' +
                     '</div>' +
                     '<div class="cart-controls">' +
-                        '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-</button>' +
-                        '<span class="item-qty-display">' + item.qty + '</span>' +
-                        '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+</button>' +
-                        '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
+                        '<div class="control-row-main">' +
+                            '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-1</button>' +
+                            '<span class="item-qty-display">' + item.qty.toFixed(2) + '</span>' +
+                            '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+1</button>' +
+                            '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
+                        '</div>' +
+                        '<div class="fraction-row">' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.25)">+0.25</button>' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.33)">+0.33</button>' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.50)">+0.50</button>' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.75)">+0.75</button>' +
+                        '</div>' +
                     '</div>';
                 
                 listContainer.appendChild(row);
