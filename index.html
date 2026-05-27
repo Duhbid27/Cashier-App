@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport settings tailored to stop iOS zoom on double tap -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sarah Selene Store</title>
     <style>
@@ -68,14 +67,18 @@
             gap: 15px;
         }
 
-        /* Massive Item Buttons */
+        /* Massive Text-Only Item Buttons */
         .product-card {
             width: calc(33.33% - 10px);
+            min-height: 120px;
             background: #ffffff;
             border: 3px solid #bcbfc6;
             border-radius: 12px;
-            padding: 10px;
-            text-align: center;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
@@ -84,23 +87,16 @@
             transform: scale(0.98);
         }
 
-        .product-card img {
-            width: 100%;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 6px;
-            background-color: #f3f4f6;
-        }
-
         .product-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            margin: 8px 0 4px 0;
+            margin-bottom: 8px;
             color: #111827;
+            word-break: break-word;
         }
 
         .product-price {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #2563eb;
             margin: 0;
@@ -217,13 +213,27 @@
             border-radius: 8px;
             cursor: pointer;
         }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            color: #111827;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: bold;
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
 
+    <div id="loadingOverlay" class="loading-overlay">LOADING ITEMS FROM GOOGLE SHEETS...</div>
+
     <div class="app-container">
         
-        <!-- Left Side: Catalog Window -->
         <div class="catalog-side">
             <div class="search-box-container">
                 <input type="text" id="searchBar" class="search-bar" placeholder="🔍 TYPE TO SEARCH ITEMS..." oninput="filterProducts()">
@@ -233,7 +243,6 @@
             </div>
         </div>
 
-        <!-- Right Side: Active Cart Register -->
         <div class="cart-side">
             <div class="cart-header">SHOPPING CART</div>
             <div id="cartItemsList" class="cart-items-list"></div>
@@ -250,19 +259,54 @@
     </div>
 
     <script>
-        // Pictures and inventory data
-        var productsData = [
-            { id: 1, name: "Itlog", price: 10.00, img: "https://stock.adobe.com/search?k=white+eggs" },
-            { id: 2, name: "Coke (kasalo)", price: 34.00, img: "https://covidstore.weeblysite.com/product/coke-kasalo/6" },
-            { id: 3, name: "Coke (mismo)", price: 22.00, img: "https://www.magicstarsupermarket.com/products/coke-300ml-mismo?srsltid=AfmBOoqoZ6dOrvVZdxJ8D1Iq0xA6OMnZ-OfEhIpXBf6NghgsHbIL5ZUt" },
-            { id: 4, name: "Fresh Milk", price: 95.00, img: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200" },
-            { id: 5, name: "Instant Coffee", price: 120.00, img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200" },
-            { id: 6, name: "White Sugar", price: 50.00, img: "https://images.unsplash.com/photo-1581781890096-f1688abf9af6?w=200" }
-        ];
-
+        // Your specific Google Sheets raw CSV output link
+        var csvUrl = "https://docs.google.com/spreadsheets/d/1hpSrGh5l0b2jwqv8isdI5ivFq1N1SgWt1jHm-_nAazE/export?format=csv";
+        
+        var productsData = [];
         var cart = [];
 
-        // Render standard inventory display cards
+        // Fetch CSV data from Google Sheets safely supporting older browsers (ES5/XMLHttpRequest)
+        function loadInventoryFromSheets() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", csvUrl, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        parseCSV(xhr.responseText);
+                    } else {
+                        alert("Failed to load inventory from Google Sheets. Ensure your sheet is shared as 'Anyone with the link can view'.");
+                        document.getElementById("loadingOverlay").style.display = "none";
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        // Custom ES5 native CSV parser loop to keep iOS 9 compatibility solid
+        function parseCSV(csvText) {
+            var lines = csvText.split(/\r\n|\n/);
+            var parsedProducts = [];
+            
+            // Loop starts at 1 to skip header row (id, name, price)
+            for (var i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === "") continue;
+                
+                var columns = lines[i].split(",");
+                if (columns.length >= 3) {
+                    parsedProducts.push({
+                        id: parseInt(columns[0].trim(), 10),
+                        name: columns[1].trim(),
+                        price: parseFloat(columns[2].trim())
+                    });
+                }
+            }
+            
+            productsData = parsedProducts;
+            renderCatalog(productsData);
+            document.getElementById("loadingOverlay").style.display = "none";
+        }
+
+        // Render standard inventory display cards (No Image Version)
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -274,7 +318,6 @@
                 card.setAttribute("onclick", "addToCart(" + p.id + ")");
                 
                 card.innerHTML = 
-                    '<img src="' + p.img + '" alt="' + p.name + '">' +
                     '<div class="product-title">' + p.name + '</div>' +
                     '<div class="product-price">₱' + p.price.toFixed(2) + '</div>';
                 
@@ -387,7 +430,7 @@
 
         // Application initialization sequence
         window.onload = function() {
-            renderCatalog(productsData);
+            loadInventoryFromSheets();
         };
     </script>
 </body>
