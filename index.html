@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport settings tailored to stop iOS zoom on double tap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simple Cashier POS</title>
+    <style>
+        /* CSS Reset & Variable Fallbacks for old Safari */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f5f7;
+            overflow: hidden;
+        }
+
+        /* Force landscape layout container splitting Screen 65/35 */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* LEFT SIDE: Product Catalogue Search + Grid */
+        .catalog-side {
+            width: 65%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-right: 4px solid #d1d5db;
+            background-color: #ffffff;
+        }
+
+        .search-box-container {
+            padding: 15px;
+            background-color: #eaecef;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        /* Massive Search input for bad eyesight */
+        .search-bar {
+            width: 100%;
+            padding: 16px;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #9ca3af;
+            border-radius: 8px;
+        }
+
+        .grid-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            -webkit-overflow-scrolling: touch; /* Smooth iOS momentum scroll */
+        }
+
+        .products-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Massive Item Buttons */
+        .product-card {
+            width: calc(33.33% - 10px);
+            background: #ffffff;
+            border: 3px solid #bcbfc6;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .product-card:active {
+            background-color: #e5e7eb;
+            transform: scale(0.98);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 6px;
+            background-color: #f3f4f6;
+        }
+
+        .product-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 8px 0 4px 0;
+            color: #111827;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 0;
+        }
+
+        /* RIGHT SIDE: Cart Processing Panel */
+        .cart-side {
+            width: 35%;
+            height: 100%;
+            background-color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        .cart-header {
+            padding: 20px;
+            background-color: #111827;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 2px solid #374151;
+        }
+
+        .cart-items-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Row item details inside cart */
+        .cart-item {
+            background-color: #374151;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cart-item-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .cart-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Gigantic action buttons for adjustments */
+        .qty-btn {
+            width: 55px;
+            height: 55px;
+            font-size: 28px;
+            font-weight: bold;
+            background-color: #4b5563;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .qty-btn.plus { background-color: #10b981; }
+        .qty-btn.minus { background-color: #f59e0b; }
+        
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .item-qty-display {
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Sticky Footer Total Counter */
+        .cart-footer {
+            background-color: #111827;
+            padding: 20px;
+            border-top: 3px solid #374151;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .total-label { font-size: 24px; font-weight: bold; }
+        .total-amount { font-size: 36px; font-weight: 900; color: #10b981; }
+
+        .clear-all-btn {
+            width: 100%;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Left Side: Catalog Window -->
+        <div class="catalog-side">
+            <div class="search-box-container">
+                <input type="text" id="searchBar" class="search-bar" placeholder="🔍 TYPE TO SEARCH ITEMS..." oninput="filterProducts()">
+            </div>
+            <div class="grid-scroll">
+                <div id="productsGrid" class="products-grid"></div>
+            </div>
+        </div>
+
+        <!-- Right Side: Active Cart Register -->
+        <div class="cart-side">
+            <div class="cart-header">SHOPPING CART</div>
+            <div id="cartItemsList" class="cart-items-list"></div>
+            
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span class="total-label">TOTAL:</span>
+                    <span id="totalDisplay" class="total-amount">0.00</span>
+                </div>
+                <button class="clear-all-btn" onclick="clearCart()">CLEAR ALL</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Inline Mock Database with generic royalty-free fallback images
+        var productsData = [
+            { id: 1, name: "Apple", price: 25.00, img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=200" },
+            { id: 2, name: "Banana", price: 15.00, img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200" },
+            { id: 3, name: "White Bread", price: 60.00, img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200" },
+            { id: 4, name: "Fresh Milk", price: 95.00, img: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200" },
+            { id: 5, name: "Instant Coffee", price: 120.00, img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200" },
+            { id: 6, name: "White Sugar", price: 50.00, img: "https://images.unsplash.com/photo-1581781890096-f1688abf9af6?w=200" }
+        ];
+
+        var cart = [];
+
+        // Render standard inventory display cards
+        function renderCatalog(items) {
+            var grid = document.getElementById("productsGrid");
+            grid.innerHTML = "";
+            
+            for (var i = 0; i < items.length; i++) {
+                var p = items[i];
+                var card = document.createElement("div");
+                card.className = "product-card";
+                card.setAttribute("onclick", "addToCart(" + p.id + ")");
+                
+                card.innerHTML = 
+                    '<img src="' + p.img + '" alt="' + p.name + '">' +
+                    '<div class="product-title">' + p.name + '</div>' +
+                    '<div class="product-price">₱' + p.price.toFixed(2) + '</div>';
+                
+                grid.appendChild(card);
+            }
+        }
+
+        // Live text filter execution loop
+        function filterProducts() {
+            var query = document.getElementById("searchBar").value.toLowerCase();
+            var filtered = [];
+            for (var i = 0; i < productsData.length; i++) {
+                if (productsData[i].name.toLowerCase().indexOf(query) !== -1) {
+                    filtered.push(productsData[i]);
+                }
+            }
+            renderCatalog(filtered);
+        }
+
+        // Add element to transactional storage array
+        function addToCart(id) {
+            var found = false;
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                var product = null;
+                for (var j = 0; j < productsData.length; j++) {
+                    if (productsData[j].id === id) {
+                        product = productsData[j];
+                        break;
+                    }
+                }
+                if (product) {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        qty: 1
+                    });
+                }
+            }
+            updateCartUI();
+        }
+
+        // Adjust entry volumes up or down
+        function changeQty(id, delta) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty += delta;
+                    if (cart[i].qty <= 0) {
+                        cart.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        // Explicit single item array truncation
+        function removeLineItem(id) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart.splice(i, 1);
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCartUI();
+        }
+
+        // Primary UI processing cycle
+        function updateCartUI() {
+            var listContainer = document.getElementById("cartItemsList");
+            listContainer.innerHTML = "";
+            var runningTotal = 0;
+
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                var itemCost = item.price * item.qty;
+                runningTotal += itemCost;
+
+                var row = document.createElement("div");
+                row.className = "cart-item";
+                row.innerHTML = 
+                    '<div class="cart-item-meta">' +
+                        '<span>' + item.name + '</span>' +
+                        '<span>₱' + itemCost.toFixed(2) + '</span>' +
+                    '</div>' +
+                    '<div class="cart-controls">' +
+                        '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-</button>' +
+                        '<span class="item-qty-display">' + item.qty + '</span>' +
+                        '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+</button>' +
+                        '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
+                    '</div>';
+                
+                listContainer.appendChild(row);
+            }
+
+            document.getElementById("totalDisplay").innerText = "₱" + runningTotal.toFixed(2);
+        }
+
+        // Application initialization sequence
+        window.onload = function() {
+            renderCatalog(productsData);
+        };
+    </script>
+</body>
+</html>
