@@ -65,10 +65,10 @@
             gap: 15px;
         }
 
-        /* --- PRODUCT CARD STYLES --- */
+        /* --- PRODUCT CARD STYLES (PORTRAIT RECTANGLE) --- */
         .product-card {
             width: calc(33.33% - 10px);
-            min-height: 180px;
+            min-height: 240px; /* Increased height to make it a distinct vertical rectangle */
             background: #ffffff;
             border: 3px solid #bcbfc6;
             border-radius: 12px;
@@ -103,10 +103,11 @@
             color: #6b7280;
         }
 
+        /* --- PORTRAIT IMAGE CROPPING --- */
         .product-card img {
             width: 100%;
-            height: 95px;
-            object-fit: cover;
+            height: 140px; /* Tall height for portrait framing */
+            object-fit: cover; /* Crops the image dynamically to prevent distortion */
             border-radius: 6px;
             background-color: #f3f4f6;
             margin-bottom: 5px;
@@ -307,29 +308,57 @@
 
     <script>
         // --- HARDCODED INVENTORY DATA SYSTEM ---
-        // Add image paths/URLs inside the "img" property for each object.
         var productsData = [
             { id: 1, name: "Bigas (50)", price: 50.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
             { id: 2, name: "Bigas (55)", price: 55.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
-            { id: 3, name: "Mantika", price: 30.00, available: true, img: "https://cdn.store-assets.com/s/377840/i/18019817.jpg" },
-            { id: 4, name: "Marlboro", price: 180.00, available: true, img: "https://images.unsplash.com/photo-1527137341206-20050bc60da4?w=200" },
-            { id: 5, name: "Itlog", price: 10.00, available: false, img: "" },
-            { id: 6, name: "Coke (1.5)", price: 0.00, available: true, img: "" },
-            { id: 7, name: "Coke (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 8, name: "Coke (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 9, name: "Coke (Solo)", price: 0.00, available: true, img: "" },
-            { id: 10, name: "Royal (1.5)", price: 0.00, available: true, img: "" },
-            { id: 11, name: "Royal (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 12, name: "Royal (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 13, name: "Royal (Solo)", price: 0.00, available: true, img: "" },
-            { id: 14, name: "Sprite (1.5)", price: 0.00, available: true, img: "" },
-            { id: 15, name: "Sprite (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 16, name: "Sprite (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 17, name: "Sprite (Solo)", price: 0.00, available: true, img: "" },
-            { id: 18, name: "Dutchmill (Small)", price: 0.00, available: true, img: "" },
-            { id: 19, name: "Dutchmill (Big)", price: 0.00, available: true, img: "" },
-            { id: 20, name: "Chuckie (Small)", price: 0.00, available: true, img: "" },
-            { id: 21, name: "Chuckie (Big)", price: 0.00, available: true, img: "" }
+            { id: 3, name: "Mantika", price: 0.00, available: false, img: "https://cdn.store-assets.com/s/377840/i/18019817.jpg" },
+            { id: 4, name: "Itlog", price: 10.00, available: true, img: "" },
+            { id: 5, name: "Coke (1.5)", price: 0.00, available: true, img: "" },
+            { id: 6, name: "Coke (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 7, name: "Coke (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 8, name: "Coke (Solo)", price: 14.00, available: true, img: "" },
+            { id: 9, name: "Royal (1.5)", price: 0.00, available: true, img: "" },
+            { id: 10, name: "Royal (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 11, name: "Royal (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 12, name: "Royal (Solo)", price: 14.00, available: true, img: "" },
+            { id: 13, name: "Sprite (1.5)", price: 0.00, available: true, img: "" },
+            { id: 14, name: "Sprite (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 15, name: "Sprite (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 16, name: "Sprite (Solo)", price: 14.00, available: true, img: "" },
+            { id: 17, name: "Mt. Dew (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 18, name: "Mt. Dew (18)", price: 18.00, available: true, img: "" },
+            { id: 19, name: "Mt. Dew (Solo)", price: 0.00, available: false, img: "" },
+            { id: 20, name: "Dutchmill (Small)", price: 0.00, available: true, img: "" },
+            { id: 21, name: "Dutchmill (Big)", price: 0.00, available: true, img: "" },
+            { id: 22, name: "Chuckie (Small)", price: 0.00, available: true, img: "" },
+            { id: 23, name: "Chuckie (Big)", price: 0.00, available: true, img: "" },
+            { id: 24, name: "Yakult", price: 0.00, available: true, img: "" },
+            { id: 25, name: "Cobra", price: 0.00, available: false, img: "" },
+            { id: 26, name: "Sting", price: 0.00, available: false, img: "" },
+            { id: 27, name: "Sterilized", price: 0.00, available: false, img: "" },
+            { id: 28, name: "Pineapple Juice", price: 0.00, available: false, img: "" },
+            { id: 29, name: "Water (500ml)", price: 0.00, available: false, img: "" },
+            { id: 30, name: "Water (750ml)", price: 0.00, available: false, img: "" },
+            { id: 31, name: "RedHorse (500ml)", price: 0.00, available: false, img: "" },
+            { id: 32, name: "RedHorse (1L)", price: 0.00, available: false, img: "" },
+            { id: 33, name: "Pale Pilsen", price: 0.00, available: false, img: "" },
+            { id: 34, name: "Pale Pilsen (1L)", price: 0.00, available: false, img: "" },
+            { id: 35, name: "San Miguel (Lights)", price: 0.00, available: false, img: "" },
+            { id: 36, name: "San Miguel (Apple)", price: 0.00, available: false, img: "" },
+            { id: 37, name: "Rebisco (Cracker)", price: 0.00, available: false, img: "" },
+            { id: 38, name: "Rebisco (Choco)", price: 0.00, available: false, img: "" },
+            { id: 39, name: "Rebisco (Strawberry)", price: 0.00, available: false, img: "" },
+            { id: 40, name: "Skyflakes", price: 0.00, available: false, img: "" },
+            { id: 41, name: "Hansel (Cracker)", price: 0.00, available: false, img: "" },
+            { id: 42, name: "Hansel (Choco)", price: 0.00, available: false, img: "" },
+            { id: 43, name: "Hansel (Mocha)", price: 0.00, available: false, img: "" },
+            { id: 44, name: "Buttercream", price: 0.00, available: false, img: "" },
+            { id: 45, name: "Fita", price: 0.00, available: false, img: "" },
+            { id: 46, name: "Overload", price: 0.00, available: false, img: "" },
+            { id: 47, name: "WhattaTops", price: 0.00, available: false, img: "" },
+            { id: 48, name: "FudgeeBar", price: 0.00, available: false, img: "" },
+            { id: 49, name: "Marlboro", price: 0.00, available: false, img: "" },
+            { id: 50, name: "Fortune", price: 0.00, available: false, img: "" },
         ];
 
         var cart = [];
@@ -350,7 +379,6 @@
                     card.className = "product-card unavailable";
                 }
                 
-                // Fallback placeholder image if no URL string is given
                 var imageSrc = p.img ? p.img : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=200";
                 
                 card.innerHTML = 
@@ -482,7 +510,6 @@
                             '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
                         '</div>';
                 
-                // Bigas items conditionally show only +0.25 and +0.33 helpers
                 if (isRice) {
                     innerHTMLString += 
                         '<div class="fraction-row">' +
@@ -491,7 +518,6 @@
                         '</div>';
                 }
                 
-                // Mantika items conditionally show only +0.50 helper
                 if (isOil) {
                     innerHTMLString += 
                         '<div class="fraction-row">' +
