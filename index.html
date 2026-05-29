@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sarah Selene Store</title>
     <style>
-        /* CSS Reset & Variable Fallbacks for old Safari */
+        /* --- CORE APPLICATION STYLES --- */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -21,14 +21,13 @@
             overflow: hidden;
         }
 
-        /* Force landscape layout container splitting Screen 65/35 */
         .app-container {
             display: flex;
             width: 100%;
             height: 100%;
         }
 
-        /* LEFT SIDE: Product Catalogue Search + Grid */
+        /* --- LEFT CATALOG SIDE STYLES --- */
         .catalog-side {
             width: 65%;
             height: 100%;
@@ -44,7 +43,6 @@
             border-bottom: 2px solid #d1d5db;
         }
 
-        /* Massive Search input for bad eyesight */
         .search-bar {
             width: 100%;
             padding: 16px;
@@ -58,7 +56,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
-            -webkit-overflow-scrolling: touch; /* Smooth iOS momentum scroll */
+            -webkit-overflow-scrolling: touch;
         }
 
         .products-grid {
@@ -67,7 +65,7 @@
             gap: 15px;
         }
 
-        /* Massive Text-Only Item Buttons */
+        /* --- PRODUCT CARD STYLES --- */
         .product-card {
             width: calc(33.33% - 10px);
             min-height: 120px;
@@ -82,9 +80,27 @@
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
+        
         .product-card:active {
             background-color: #e5e7eb;
             transform: scale(0.98);
+        }
+
+        .product-card.unavailable {
+            background-color: #e5e7eb;
+            border: 3px dashed #9ca3af;
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .product-card.unavailable .product-title {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        
+        .product-card.unavailable .product-price {
+            color: #6b7280;
         }
 
         .product-title {
@@ -102,7 +118,7 @@
             margin: 0;
         }
 
-        /* RIGHT SIDE: Cart Processing Panel */
+        /* --- RIGHT SIDE REGISTER/CART STYLES --- */
         .cart-side {
             width: 35%;
             height: 100%;
@@ -128,7 +144,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Row item details inside cart */
         .cart-item {
             background-color: #374151;
             border-radius: 8px;
@@ -153,21 +168,19 @@
             gap: 8px;
         }
 
-        /* Top row controls: Basic adjustments */
         .control-row-main {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Bottom row controls: Quick fractional selectors */
         .fraction-row {
             display: flex;
             gap: 6px;
             justify-content: flex-start;
         }
 
-        /* Gigantic action buttons for basic adjustments */
+        /* --- INTERACTIVE BUTTON STYLES --- */
         .qty-btn {
             width: 55px;
             height: 55px;
@@ -179,10 +192,10 @@
             border-radius: 8px;
             cursor: pointer;
         }
+        
         .qty-btn.plus { background-color: #10b981; }
         .qty-btn.minus { background-color: #f59e0b; }
         
-        /* Specialized fractional increment buttons */
         .frac-btn {
             flex: 1;
             padding: 10px 4px;
@@ -194,6 +207,7 @@
             border-radius: 6px;
             cursor: pointer;
         }
+        
         .frac-btn:active {
             background-color: #374151;
         }
@@ -217,7 +231,7 @@
             color: #fca5a5;
         }
 
-        /* Sticky Footer Total Counter */
+        /* --- CART SUMMARY FOOTER STYLES --- */
         .cart-footer {
             background-color: #111827;
             padding: 20px;
@@ -245,24 +259,9 @@
             border-radius: 8px;
             cursor: pointer;
         }
-
-        .loading-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.9);
-            color: #111827;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            font-weight: bold;
-            z-index: 999;
-        }
     </style>
 </head>
 <body>
-
-    <div id="loadingOverlay" class="loading-overlay">LOADING ITEMS FROM GOOGLE SHEETS...</div>
 
     <div class="app-container">
         
@@ -291,54 +290,22 @@
     </div>
 
     <script>
-        // Your specific Google Sheets raw CSV output link
-        var csvUrl = "https://docs.google.com/spreadsheets/d/1hpSrGh5l0b2jwqv8isdI5ivFq1N1SgWt1jHm-_nAazE/export?format=csv";
-        
-        var productsData = [];
+        // --- HARDCODED INVENTORY DATA SYSTEM ---
+        // Change names, prices, or availability statuses right here.
+        var productsData = [
+            { id: 1, name: "Bigas Sinandomeng", price: 55.00, available: true },
+            { id: 2, name: "Bigas Dinorado", price: 62.00, available: true },
+            { id: 3, name: "Itlog", price: 10.00, available: true },
+            { id: 4, name: "Coke (kasalo)", price: 34.00, available: false }, // Will display as Out of Stock / Strikethrough
+            { id: 5, name: "Coke (mismo)", price: 22.00, available: true },
+            { id: 6, name: "Fresh Milk", price: 95.00, available: true },
+            { id: 7, name: "Instant Coffee", price: 120.00, available: true },
+            { id: 8, name: "White Sugar", price: 50.00, available: true }
+        ];
+
         var cart = [];
 
-        // Fetch CSV data from Google Sheets safely supporting older browsers (ES5/XMLHttpRequest)
-        function loadInventoryFromSheets() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", csvUrl, true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        parseCSV(xhr.responseText);
-                    } else {
-                        alert("Failed to load inventory from Google Sheets. Ensure your sheet is shared as 'Anyone with the link can view'.");
-                        document.getElementById("loadingOverlay").style.display = "none";
-                    }
-                }
-            };
-            xhr.send();
-        }
-
-        // Custom ES5 native CSV parser loop to keep iOS 9 compatibility solid
-        function parseCSV(csvText) {
-            var lines = csvText.split(/\r\n|\n/);
-            var parsedProducts = [];
-            
-            // Loop starts at 1 to skip header row (id, name, price)
-            for (var i = 1; i < lines.length; i++) {
-                if (lines[i].trim() === "") continue;
-                
-                var columns = lines[i].split(",");
-                if (columns.length >= 3) {
-                    parsedProducts.push({
-                        id: parseInt(columns[0].trim(), 10),
-                        name: columns[1].trim(),
-                        price: parseFloat(columns[2].trim())
-                    });
-                }
-            }
-            
-            productsData = parsedProducts;
-            renderCatalog(productsData);
-            document.getElementById("loadingOverlay").style.display = "none";
-        }
-
-        // Render standard inventory display cards (No Image Version)
+        // Render inventory menu items grid handling active availability status
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -346,12 +313,17 @@
             for (var i = 0; i < items.length; i++) {
                 var p = items[i];
                 var card = document.createElement("div");
-                card.className = "product-card";
-                card.setAttribute("onclick", "addToCart(" + p.id + ")");
+                
+                if (p.available) {
+                    card.className = "product-card";
+                    card.setAttribute("onclick", "addToCart(" + p.id + ")");
+                } else {
+                    card.className = "product-card unavailable";
+                }
                 
                 card.innerHTML = 
                     '<div class="product-title">' + p.name + '</div>' +
-                    '<div class="product-price">₱' + p.price.toFixed(2) + '</div>';
+                    '<div class="product-price">' + (p.available ? '₱' + p.price.toFixed(2) : 'OUT OF STOCK') + '</div>';
                 
                 grid.appendChild(card);
             }
@@ -440,9 +412,16 @@
                 var itemCost = item.price * item.qty;
                 runningTotal += itemCost;
 
+                // Is this a rice ("Bigas") entry?
+                var isRice = item.name.toLowerCase().indexOf("bigas") !== -1;
+                
+                // Format the displayed quantity cleanly
+                var displayedQty = isRice ? item.qty.toFixed(2) : parseInt(item.qty, 10);
+
                 var row = document.createElement("div");
                 row.className = "cart-item";
-                row.innerHTML = 
+                
+                var innerHTMLString = 
                     '<div class="cart-item-meta">' +
                         '<span>' + item.name + '</span>' +
                         '<span>₱' + itemCost.toFixed(2) + '</span>' +
@@ -450,18 +429,24 @@
                     '<div class="cart-controls">' +
                         '<div class="control-row-main">' +
                             '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-1</button>' +
-                            '<span class="item-qty-display">' + item.qty.toFixed(2) + '</span>' +
+                            '<span class="item-qty-display">' + displayedQty + '</span>' +
                             '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+1</button>' +
                             '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
-                        '</div>' +
+                        '</div>';
+                
+                // Inject structural fraction rows ONLY if name matches Bigas criteria
+                if (isRice) {
+                    innerHTMLString += 
                         '<div class="fraction-row">' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.25)">+0.25</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.33)">+0.33</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.50)">+0.50</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.75)">+0.75</button>' +
-                        '</div>' +
-                    '</div>';
-                
+                        '</div>';
+                }
+
+                innerHTMLString += '</div>';
+                row.innerHTML = innerHTMLString;
                 listContainer.appendChild(row);
             }
 
@@ -470,7 +455,7 @@
 
         // Application initialization sequence
         window.onload = function() {
-            loadInventoryFromSheets();
+            renderCatalog(productsData);
         };
     </script>
 </body>
