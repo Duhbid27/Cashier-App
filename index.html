@@ -68,11 +68,11 @@
         /* --- PRODUCT CARD STYLES (PORTRAIT RECTANGLE) --- */
         .product-card {
             width: calc(33.33% - 10px);
-            min-height: 240px; /* Increased height to make it a distinct vertical rectangle */
+            min-height: 250px;
             background: #ffffff;
             border: 3px solid #bcbfc6;
             border-radius: 12px;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -103,14 +103,16 @@
             color: #6b7280;
         }
 
-        /* --- PORTRAIT IMAGE CROPPING --- */
+        /* --- PERFECT SQUARE IMAGE DESIGN --- */
         .product-card img {
             width: 100%;
-            height: 140px; /* Tall height for portrait framing */
-            object-fit: cover; /* Crops the image dynamically to prevent distortion */
+            /* Uses the full width of the card box to establish a 1:1 square frame */
+            height: auto; 
+            aspect-ratio: 1 / 1; 
+            object-fit: cover; /* Centers and crops safely without stretching graphics */
             border-radius: 6px;
             background-color: #f3f4f6;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .product-title {
@@ -312,22 +314,22 @@
             { id: 1, name: "Bigas (50)", price: 50.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
             { id: 2, name: "Bigas (55)", price: 55.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
             { id: 3, name: "Mantika", price: 0.00, available: false, img: "https://cdn.store-assets.com/s/377840/i/18019817.jpg" },
-            { id: 4, name: "Itlog", price: 10.00, available: true, img: "" },
-            { id: 5, name: "Coke (1.5)", price: 0.00, available: true, img: "" },
-            { id: 6, name: "Coke (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 7, name: "Coke (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 8, name: "Coke (Solo)", price: 14.00, available: true, img: "" },
+            { id: 4, name: "Itlog", price: 10.00, available: true, img: "https://media.istockphoto.com/id/1447419799/photo/one-chicken-egg-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=l9Muo1lMAnmq7ngrICvn0FSSlUgpTGuoLd6MW7WSdw8=" },
+            { id: 5, name: "Coke (1.5)", price: 0.00, available: true, img: "https://assets.landers.ph/catalog/product/1/0/106522_4_.jpg" },
+            { id: 6, name: "Coke (Kasalo)", price: 0.00, available: true, img: "https://images.deliveryhero.io/image/nv/Philippines/Kevin-Kim-Grocery-Store-Amurao-Opportunity/65450004975718.jpg?height=176" },
+            { id: 7, name: "Coke (Mismo)", price: 0.00, available: true, img: "https://imartgrocersph.com/wp-content/uploads/2020/09/Coke-Regular-Mismo-12_s.png" },
+            { id: 8, name: "Coke (8oz)", price: 14.00, available: true, img: "https://c8.alamy.com/comp/2AJHCY0/food-drink-coca-cola-coke-classic-glass-8-fl-oz-ounce-bottle-2AJHCY0.jpg" },
             { id: 9, name: "Royal (1.5)", price: 0.00, available: true, img: "" },
             { id: 10, name: "Royal (Kasalo)", price: 0.00, available: true, img: "" },
             { id: 11, name: "Royal (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 12, name: "Royal (Solo)", price: 14.00, available: true, img: "" },
+            { id: 12, name: "Royal (8oz)", price: 14.00, available: true, img: "" },
             { id: 13, name: "Sprite (1.5)", price: 0.00, available: true, img: "" },
             { id: 14, name: "Sprite (Kasalo)", price: 0.00, available: true, img: "" },
             { id: 15, name: "Sprite (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 16, name: "Sprite (Solo)", price: 14.00, available: true, img: "" },
+            { id: 16, name: "Sprite (8oz)", price: 14.00, available: true, img: "" },
             { id: 17, name: "Mt. Dew (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 18, name: "Mt. Dew (18)", price: 18.00, available: true, img: "" },
-            { id: 19, name: "Mt. Dew (Solo)", price: 0.00, available: false, img: "" },
+            { id: 18, name: "Mt. Dew (12oz)", price: 18.00, available: true, img: "" },
+            { id: 19, name: "Mt. Dew (8oz)", price: 0.00, available: false, img: "" },
             { id: 20, name: "Dutchmill (Small)", price: 0.00, available: true, img: "" },
             { id: 21, name: "Dutchmill (Big)", price: 0.00, available: true, img: "" },
             { id: 22, name: "Chuckie (Small)", price: 0.00, available: true, img: "" },
