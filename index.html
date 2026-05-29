@@ -68,14 +68,14 @@
         /* --- PRODUCT CARD STYLES --- */
         .product-card {
             width: calc(33.33% - 10px);
-            min-height: 120px;
+            min-height: 180px;
             background: #ffffff;
             border: 3px solid #bcbfc6;
             border-radius: 12px;
-            padding: 15px 10px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -103,19 +103,30 @@
             color: #6b7280;
         }
 
+        .product-card img {
+            width: 100%;
+            height: 95px;
+            object-fit: cover;
+            border-radius: 6px;
+            background-color: #f3f4f6;
+            margin-bottom: 5px;
+        }
+
         .product-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin: 4px 0;
             color: #111827;
             word-break: break-word;
+            text-align: center;
         }
 
         .product-price {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             color: #2563eb;
             margin: 0;
+            text-align: center;
         }
 
         /* --- RIGHT SIDE REGISTER/CART STYLES --- */
@@ -180,7 +191,7 @@
             justify-content: flex-start;
         }
 
-        /* --- INTERACTIVE BUTTON STYLES --- */
+        /* --- INTERACTIVE BUTTON & INPUT STYLES --- */
         .qty-btn {
             width: 55px;
             height: 55px;
@@ -223,12 +234,17 @@
             cursor: pointer;
         }
 
-        .item-qty-display {
-            font-size: 26px;
+        /* Large Typeable Numeric Input Box for Bad Eyesight */
+        .item-qty-input {
+            width: 75px;
+            height: 50px;
+            font-size: 24px;
             font-weight: bold;
-            min-width: 60px;
             text-align: center;
+            background-color: #1f2937;
             color: #fca5a5;
+            border: 2px solid #9ca3af;
+            border-radius: 6px;
         }
 
         /* --- CART SUMMARY FOOTER STYLES --- */
@@ -291,32 +307,34 @@
 
     <script>
         // --- HARDCODED INVENTORY DATA SYSTEM ---
-        // Change names, prices, or availability statuses right here.
+        // Add image paths/URLs inside the "img" property for each object.
         var productsData = [
-            { id: 1, name: "Bigas (50)", price: 50.00, available: true },
-            { id: 2, name: "Bigas (55)", price: 55.00, available: true },
-            { id: 3, name: "Itlog", price: 10.00, available: false },
-            { id: 4, name: "Coke (1.5)", price: 0.00, available: true },
-            { id: 5, name: "Coke (Kasalo)", price: 0.00, available: true },
-            { id: 6, name: "Coke (Mismo)", price: 0.00, available: true },
-            { id: 7, name: "Coke (Solo)", price: 0.00, available: true },
-            { id: 8, name: "Royal (1.5)", price: 0.00, available: true },
-            { id: 9, name: "Royal (Kasalo)", price: 0.00, available: true },
-            { id: 10, name: "Royal (Mismo)", price: 0.00, available: true },
-            { id: 11, name: "Royal (Solo)", price: 0.00, available: true },
-            { id: 12, name: "Sprite (1.5)", price: 0.00, available: true },
-            { id: 13, name: "Sprite (Kasalo)", price: 0.00, available: true },
-            { id: 14, name: "Sprite (Mismo)", price: 0.00, available: true },
-            { id: 15, name: "Sprite (Solo)", price: 0.00, available: true },
-            { id: 16, name: "Dutchmill (Small)", price: 0.00, available: true },
-            { id: 17, name: "Dutchmill (Big)", price: 0.00, available: true },
-            { id: 18, name: "Chuckie (Small)", price: 0.00, available: true },
-            { id: 19, name: "Chuckie (Big)", price: 0.00, available: true },
+            { id: 1, name: "Bigas (50)", price: 50.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
+            { id: 2, name: "Bigas (55)", price: 55.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
+            { id: 3, name: "Mantika", price: 30.00, available: true, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200" },
+            { id: 4, name: "Marlboro", price: 180.00, available: true, img: "https://images.unsplash.com/photo-1527137341206-20050bc60da4?w=200" },
+            { id: 5, name: "Itlog", price: 10.00, available: false, img: "" },
+            { id: 6, name: "Coke (1.5)", price: 0.00, available: true, img: "" },
+            { id: 7, name: "Coke (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 8, name: "Coke (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 9, name: "Coke (Solo)", price: 0.00, available: true, img: "" },
+            { id: 10, name: "Royal (1.5)", price: 0.00, available: true, img: "" },
+            { id: 11, name: "Royal (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 12, name: "Royal (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 13, name: "Royal (Solo)", price: 0.00, available: true, img: "" },
+            { id: 14, name: "Sprite (1.5)", price: 0.00, available: true, img: "" },
+            { id: 15, name: "Sprite (Kasalo)", price: 0.00, available: true, img: "" },
+            { id: 16, name: "Sprite (Mismo)", price: 0.00, available: true, img: "" },
+            { id: 17, name: "Sprite (Solo)", price: 0.00, available: true, img: "" },
+            { id: 18, name: "Dutchmill (Small)", price: 0.00, available: true, img: "" },
+            { id: 19, name: "Dutchmill (Big)", price: 0.00, available: true, img: "" },
+            { id: 20, name: "Chuckie (Small)", price: 0.00, available: true, img: "" },
+            { id: 21, name: "Chuckie (Big)", price: 0.00, available: true, img: "" }
         ];
 
         var cart = [];
 
-        // Render inventory menu items grid handling active availability status
+        // Render inventory menu items grid handling images and active availability status
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -332,7 +350,11 @@
                     card.className = "product-card unavailable";
                 }
                 
+                // Fallback placeholder image if no URL string is given
+                var imageSrc = p.img ? p.img : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=200";
+                
                 card.innerHTML = 
+                    '<img src="' + imageSrc + '" alt="' + p.name + '">' +
                     '<div class="product-title">' + p.name + '</div>' +
                     '<div class="product-price">' + (p.available ? '₱' + p.price.toFixed(2) : 'OUT OF STOCK') + '</div>';
                 
@@ -382,7 +404,7 @@
             updateCartUI();
         }
 
-        // Adjust entry volumes up or down safely controlling fractional bounds
+        // Adjust entry volumes via +/- buttons safely
         function changeQty(id, delta) {
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].id === id) {
@@ -390,6 +412,21 @@
                     if (cart[i].qty <= 0) {
                         cart.splice(i, 1);
                     }
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        // Direct typed input handler
+        function updateTypedQty(id, inputElement) {
+            var value = parseFloat(inputElement.value);
+            if (isNaN(value) || value <= 0) {
+                value = 1;
+            }
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty = parseFloat(value.toFixed(2));
                     break;
                 }
             }
@@ -423,11 +460,11 @@
                 var itemCost = item.price * item.qty;
                 runningTotal += itemCost;
 
-                // Is this a rice ("Bigas") entry?
-                var isRice = item.name.toLowerCase().indexOf("bigas") !== -1;
+                var itemNameLower = item.name.toLowerCase();
+                var isRice = itemNameLower.indexOf("bigas") !== -1;
+                var isOil = itemNameLower.indexOf("mantika") !== -1;
                 
-                // Format the displayed quantity cleanly
-                var displayedQty = isRice ? item.qty.toFixed(2) : parseInt(item.qty, 10);
+                var stepVal = (isRice || isOil) ? "0.01" : "1";
 
                 var row = document.createElement("div");
                 row.className = "cart-item";
@@ -440,19 +477,25 @@
                     '<div class="cart-controls">' +
                         '<div class="control-row-main">' +
                             '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-1</button>' +
-                            '<span class="item-qty-display">' + displayedQty + '</span>' +
+                            '<input type="number" step="' + stepVal + '" class="item-qty-input" value="' + item.qty + '" onchange="updateTypedQty(' + item.id + ', this)">' +
                             '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+1</button>' +
                             '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
                         '</div>';
                 
-                // Inject structural fraction rows ONLY if name matches Bigas criteria
+                // Bigas items conditionally show only +0.25 and +0.33 helpers
                 if (isRice) {
                     innerHTMLString += 
                         '<div class="fraction-row">' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.25)">+0.25</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.33)">+0.33</button>' +
+                        '</div>';
+                }
+                
+                // Mantika items conditionally show only +0.50 helper
+                if (isOil) {
+                    innerHTMLString += 
+                        '<div class="fraction-row">' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.50)">+0.50</button>' +
-                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.75)">+0.75</button>' +
                         '</div>';
                 }
 
@@ -464,7 +507,6 @@
             document.getElementById("totalDisplay").innerText = "₱" + runningTotal.toFixed(2);
         }
 
-        // Application initialization sequence
         window.onload = function() {
             renderCatalog(productsData);
         };
