@@ -87,22 +87,6 @@
             transform: scale(0.98);
         }
 
-        /* Styling state for missing/out-of-stock items */
-        .product-card.unavailable {
-            background-color: #e5e7eb;
-            border: 3px dashed #9ca3af;
-            opacity: 0.6;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .product-card.unavailable .product-title {
-            text-decoration: line-through;
-            color: #6b7280;
-        }
-        .product-card.unavailable .product-price {
-            color: #6b7280;
-        }
-
         .product-title {
             font-size: 24px;
             font-weight: 800;
@@ -335,23 +319,16 @@
             var lines = csvText.split(/\r\n|\n/);
             var parsedProducts = [];
             
-            // Loop starts at 1 to skip header row (id, name, price, status)
+            // Loop starts at 1 to skip header row (id, name, price)
             for (var i = 1; i < lines.length; i++) {
                 if (lines[i].trim() === "") continue;
                 
                 var columns = lines[i].split(",");
                 if (columns.length >= 3) {
-                    // Check availability status column string cleanly
-                    var availableStatus = true;
-                    if (columns[3] && columns[3].trim().toLowerCase() === "not available") {
-                        availableStatus = false;
-                    }
-
                     parsedProducts.push({
                         id: parseInt(columns[0].trim(), 10),
                         name: columns[1].trim(),
-                        price: parseFloat(columns[2].trim()),
-                        available: availableStatus
+                        price: parseFloat(columns[2].trim())
                     });
                 }
             }
@@ -361,7 +338,7 @@
             document.getElementById("loadingOverlay").style.display = "none";
         }
 
-        // Render inventory menu items grid handling active availability status
+        // Render standard inventory display cards (No Image Version)
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -369,18 +346,12 @@
             for (var i = 0; i < items.length; i++) {
                 var p = items[i];
                 var card = document.createElement("div");
-                
-                if (p.available) {
-                    card.className = "product-card";
-                    card.setAttribute("onclick", "addToCart(" + p.id + ")");
-                } else {
-                    card.className = "product-card unavailable";
-                    // Tapping an unavailable card does absolutely nothing
-                }
+                card.className = "product-card";
+                card.setAttribute("onclick", "addToCart(" + p.id + ")");
                 
                 card.innerHTML = 
                     '<div class="product-title">' + p.name + '</div>' +
-                    '<div class="product-price">' + (p.available ? '₱' + p.price.toFixed(2) : 'OUT OF STOCK') + '</div>';
+                    '<div class="product-price">₱' + p.price.toFixed(2) + '</div>';
                 
                 grid.appendChild(card);
             }
@@ -469,16 +440,9 @@
                 var itemCost = item.price * item.qty;
                 runningTotal += itemCost;
 
-                // Is this a rice ("Bigas") entry?
-                var isRice = item.name.toLowerCase().indexOf("bigas") !== -1;
-                
-                // Format the displayed quantity cleanly
-                var displayedQty = isRice ? item.qty.toFixed(2) : parseInt(item.qty, 10);
-
                 var row = document.createElement("div");
                 row.className = "cart-item";
-                
-                var innerHTMLString = 
+                row.innerHTML = 
                     '<div class="cart-item-meta">' +
                         '<span>' + item.name + '</span>' +
                         '<span>₱' + itemCost.toFixed(2) + '</span>' +
@@ -486,24 +450,18 @@
                     '<div class="cart-controls">' +
                         '<div class="control-row-main">' +
                             '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-1</button>' +
-                            '<span class="item-qty-display">' + displayedQty + '</span>' +
+                            '<span class="item-qty-display">' + item.qty.toFixed(2) + '</span>' +
                             '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+1</button>' +
                             '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
-                        '</div>';
-                
-                // Inject structural fraction rows ONLY if name matches Bigas criteria
-                if (isRice) {
-                    innerHTMLString += 
+                        '</div>' +
                         '<div class="fraction-row">' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.25)">+0.25</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.33)">+0.33</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.50)">+0.50</button>' +
                             '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.75)">+0.75</button>' +
-                        '</div>';
-                }
-
-                innerHTMLString += '</div>';
-                row.innerHTML = innerHTMLString;
+                        '</div>' +
+                    '</div>';
+                
                 listContainer.appendChild(row);
             }
 
