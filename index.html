@@ -65,20 +65,21 @@
             gap: 15px;
         }
 
-        /* --- PRODUCT CARD STYLES (PORTRAIT RECTANGLE) --- */
+        /* --- PRODUCT CARD STYLES (TEXT ONLY) --- */
         .product-card {
             width: calc(33.33% - 10px);
-            min-height: 250px;
+            min-height: 120px;
             background: #ffffff;
             border: 3px solid #bcbfc6;
             border-radius: 12px;
-            padding: 12px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            gap: 10px;
         }
         
         .product-card:active {
@@ -103,22 +104,10 @@
             color: #6b7280;
         }
 
-        /* --- PERFECT SQUARE IMAGE DESIGN --- */
-        .product-card img {
-            width: 100%;
-            /* Uses the full width of the card box to establish a 1:1 square frame */
-            height: auto; 
-            aspect-ratio: 1 / 1; 
-            object-fit: cover; /* Centers and crops safely without stretching graphics */
-            border-radius: 6px;
-            background-color: #f3f4f6;
-            margin-bottom: 8px;
-        }
-
         .product-title {
             font-size: 20px;
             font-weight: 800;
-            margin: 4px 0;
+            margin: 0;
             color: #111827;
             word-break: break-word;
             text-align: center;
@@ -311,61 +300,62 @@
     <script>
         // --- HARDCODED INVENTORY DATA SYSTEM ---
         var productsData = [
-            { id: 1, name: "Bigas (50)", price: 50.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
-            { id: 2, name: "Bigas (55)", price: 55.00, available: true, img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200" },
-            { id: 3, name: "Mantika", price: 0.00, available: false, img: "https://cdn.store-assets.com/s/377840/i/18019817.jpg" },
-            { id: 4, name: "Itlog", price: 10.00, available: true, img: "https://media.istockphoto.com/id/1447419799/photo/one-chicken-egg-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=l9Muo1lMAnmq7ngrICvn0FSSlUgpTGuoLd6MW7WSdw8=" },
-            { id: 5, name: "Coke (1.5)", price: 0.00, available: true, img: "https://assets.landers.ph/catalog/product/1/0/106522_4_.jpg" },
-            { id: 6, name: "Coke (Kasalo)", price: 0.00, available: true, img: "https://images.deliveryhero.io/image/nv/Philippines/Kevin-Kim-Grocery-Store-Amurao-Opportunity/65450004975718.jpg?height=176" },
-            { id: 7, name: "Coke (Mismo)", price: 0.00, available: true, img: "https://imartgrocersph.com/wp-content/uploads/2020/09/Coke-Regular-Mismo-12_s.png" },
-            { id: 8, name: "Coke (8oz)", price: 14.00, available: true, img: "https://c8.alamy.com/comp/2AJHCY0/food-drink-coca-cola-coke-classic-glass-8-fl-oz-ounce-bottle-2AJHCY0.jpg" },
-            { id: 9, name: "Royal (1.5)", price: 0.00, available: true, img: "" },
-            { id: 10, name: "Royal (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 11, name: "Royal (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 12, name: "Royal (8oz)", price: 14.00, available: true, img: "" },
-            { id: 13, name: "Sprite (1.5)", price: 0.00, available: true, img: "" },
-            { id: 14, name: "Sprite (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 15, name: "Sprite (Mismo)", price: 0.00, available: true, img: "" },
-            { id: 16, name: "Sprite (8oz)", price: 14.00, available: true, img: "" },
-            { id: 17, name: "Mt. Dew (Kasalo)", price: 0.00, available: true, img: "" },
-            { id: 18, name: "Mt. Dew (12oz)", price: 18.00, available: true, img: "" },
-            { id: 19, name: "Mt. Dew (8oz)", price: 0.00, available: false, img: "" },
-            { id: 20, name: "Dutchmill (Small)", price: 0.00, available: true, img: "" },
-            { id: 21, name: "Dutchmill (Big)", price: 0.00, available: true, img: "" },
-            { id: 22, name: "Chuckie (Small)", price: 0.00, available: true, img: "" },
-            { id: 23, name: "Chuckie (Big)", price: 0.00, available: true, img: "" },
-            { id: 24, name: "Yakult", price: 0.00, available: true, img: "" },
-            { id: 25, name: "Cobra", price: 0.00, available: false, img: "" },
-            { id: 26, name: "Sting", price: 0.00, available: false, img: "" },
-            { id: 27, name: "Sterilized", price: 0.00, available: false, img: "" },
-            { id: 28, name: "Pineapple Juice", price: 0.00, available: false, img: "" },
-            { id: 29, name: "Water (500ml)", price: 0.00, available: false, img: "" },
-            { id: 30, name: "Water (750ml)", price: 0.00, available: false, img: "" },
-            { id: 31, name: "RedHorse (500ml)", price: 0.00, available: false, img: "" },
-            { id: 32, name: "RedHorse (1L)", price: 0.00, available: false, img: "" },
-            { id: 33, name: "Pale Pilsen", price: 0.00, available: false, img: "" },
-            { id: 34, name: "Pale Pilsen (1L)", price: 0.00, available: false, img: "" },
-            { id: 35, name: "San Miguel (Lights)", price: 0.00, available: false, img: "" },
-            { id: 36, name: "San Miguel (Apple)", price: 0.00, available: false, img: "" },
-            { id: 37, name: "Rebisco (Cracker)", price: 0.00, available: false, img: "" },
-            { id: 38, name: "Rebisco (Choco)", price: 0.00, available: false, img: "" },
-            { id: 39, name: "Rebisco (Strawberry)", price: 0.00, available: false, img: "" },
-            { id: 40, name: "Skyflakes", price: 0.00, available: false, img: "" },
-            { id: 41, name: "Hansel (Cracker)", price: 0.00, available: false, img: "" },
-            { id: 42, name: "Hansel (Choco)", price: 0.00, available: false, img: "" },
-            { id: 43, name: "Hansel (Mocha)", price: 0.00, available: false, img: "" },
-            { id: 44, name: "Buttercream", price: 0.00, available: false, img: "" },
-            { id: 45, name: "Fita", price: 0.00, available: false, img: "" },
-            { id: 46, name: "Overload", price: 0.00, available: false, img: "" },
-            { id: 47, name: "WhattaTops", price: 0.00, available: false, img: "" },
-            { id: 48, name: "FudgeeBar", price: 0.00, available: false, img: "" },
-            { id: 49, name: "Marlboro", price: 0.00, available: false, img: "" },
-            { id: 50, name: "Fortune", price: 0.00, available: false, img: "" },
+            { id: 1, name: "Bigas (50)", price: 50.00, available: true },
+            { id: 2, name: "Bigas (55)", price: 55.00, available: true },
+            { id: 3, name: "Mantika", price: 0.00, available: false },
+            { id: 4, name: "Itlog", price: 10.00, available: true },
+            { id: 5, name: "Candy", price: 2.00, available: true }, // Added Candy with standard individual pricing display
+            { id: 6, name: "Coke (1.5)", price: 0.00, available: true },
+            { id: 7, name: "Coke (Kasalo)", price: 0.00, available: true },
+            { id: 8, name: "Coke (Mismo)", price: 0.00, available: true },
+            { id: 9, name: "Coke (8oz)", price: 14.00, available: true },
+            { id: 10, name: "Royal (1.5)", price: 0.00, available: true },
+            { id: 11, name: "Royal (Kasalo)", price: 0.00, available: true },
+            { id: 12, name: "Royal (Mismo)", price: 0.00, available: true },
+            { id: 13, name: "Royal (8oz)", price: 14.00, available: true },
+            { id: 14, name: "Sprite (1.5)", price: 0.00, available: true },
+            { id: 15, name: "Sprite (Kasalo)", price: 0.00, available: true },
+            { id: 16, name: "Sprite (Mismo)", price: 0.00, available: true },
+            { id: 17, name: "Sprite (8oz)", price: 14.00, available: true },
+            { id: 18, name: "Mt. Dew (Kasalo)", price: 0.00, available: true },
+            { id: 19, name: "Mt. Dew (12oz)", price: 18.00, available: true },
+            { id: 20, name: "Mt. Dew (8oz)", price: 0.00, available: false },
+            { id: 21, name: "Dutchmill (Small)", price: 0.00, available: true },
+            { id: 22, name: "Dutchmill (Big)", price: 0.00, available: true },
+            { id: 23, name: "Chuckie (Small)", price: 0.00, available: true },
+            { id: 24, name: "Chuckie (Big)", price: 0.00, available: true },
+            { id: 25, name: "Yakult", price: 0.00, available: true },
+            { id: 26, name: "Cobra", price: 0.00, available: false },
+            { id: 27, name: "Sting", price: 0.00, available: false },
+            { id: 28, name: "Sterilized", price: 0.00, available: false },
+            { id: 29, name: "Pineapple Juice", price: 0.00, available: false },
+            { id: 30, name: "Water (500ml)", price: 0.00, available: false },
+            { id: 31, name: "Water (750ml)", price: 0.00, available: false },
+            { id: 32, name: "RedHorse (500ml)", price: 0.00, available: false },
+            { id: 33, name: "RedHorse (1L)", price: 0.00, available: false },
+            { id: 34, name: "Pale Pilsen", price: 0.00, available: false },
+            { id: 35, name: "Pale Pilsen (1L)", price: 0.00, available: false },
+            { id: 36, name: "San Miguel (Lights)", price: 0.00, available: false },
+            { id: 37, name: "San Miguel (Apple)", price: 0.00, available: false },
+            { id: 38, name: "Rebisco (Cracker)", price: 0.00, available: false },
+            { id: 39, name: "Rebisco (Choco)", price: 0.00, available: false },
+            { id: 40, name: "Rebisco (Strawberry)", price: 0.00, available: false },
+            { id: 41, name: "Skyflakes", price: 0.00, available: false },
+            { id: 42, name: "Hansel (Cracker)", price: 0.00, available: false },
+            { id: 43, name: "Hansel (Choco)", price: 0.00, available: false },
+            { id: 44, name: "Hansel (Mocha)", price: 0.00, available: false },
+            { id: 45, name: "Buttercream", price: 0.00, available: false },
+            { id: 46, name: "Fita", price: 0.00, available: false },
+            { id: 47, name: "Overload", price: 0.00, available: false },
+            { id: 48, name: "WhattaTops", price: 0.00, available: false },
+            { id: 49, name: "FudgeeBar", price: 0.00, available: false },
+            { id: 50, name: "Marlboro", price: 0.00, available: false },
+            { id: 51, name: "Fortune", price: 0.00, available: false },
         ];
 
         var cart = [];
 
-        // Render inventory menu items grid handling images and active availability status
+        // Render inventory menu items grid (Text only, clean sizing)
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -381,12 +371,15 @@
                     card.className = "product-card unavailable";
                 }
                 
-                var imageSrc = p.img ? p.img : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=200";
-                
+                // Show standard pricing note if it's candy
+                var priceText = '₱' + p.price.toFixed(2);
+                if (p.name.toLowerCase().indexOf("candy") !== -1) {
+                    priceText = "₱2.00 (4 for ₱5)";
+                }
+
                 card.innerHTML = 
-                    '<img src="' + imageSrc + '" alt="' + p.name + '">' +
                     '<div class="product-title">' + p.name + '</div>' +
-                    '<div class="product-price">' + (p.available ? '₱' + p.price.toFixed(2) : 'OUT OF STOCK') + '</div>';
+                    '<div class="product-price">' + (p.available ? priceText : 'OUT OF STOCK') + '</div>';
                 
                 grid.appendChild(card);
             }
@@ -402,6 +395,17 @@
                 }
             }
             renderCatalog(filtered);
+        }
+
+        // Custom Pricing Engine for dynamic item conditions
+        function calculateItemCost(item) {
+            if (item.name.toLowerCase().indexOf("candy") !== -1) {
+                // Bulk Pricing: 4 pcs for 5 pesos, rest are 2 pesos each
+                var bundlesOfFour = Math.floor(item.qty / 4);
+                var remainder = item.qty % 4;
+                return (bundlesOfFour * 5.00) + (remainder * 2.00);
+            }
+            return item.price * item.qty;
         }
 
         // Add element to transactional storage array
@@ -487,7 +491,7 @@
 
             for (var i = 0; i < cart.length; i++) {
                 var item = cart[i];
-                var itemCost = item.price * item.qty;
+                var itemCost = calculateItemCost(item); // Uses custom dynamic price calculation rules
                 runningTotal += itemCost;
 
                 var itemNameLower = item.name.toLowerCase();
