@@ -166,7 +166,7 @@
             font-weight: bold;
         }
 
-        /* Dynamic Custom Amount Styling */
+        /* Dynamic Custom Amount Input Styling */
         .others-price-input {
             width: 110px;
             height: 40px;
@@ -335,87 +335,116 @@
     </div>
 
     <script>
-        // --- HARDCODED INVENTORY BACKUP ---
+        // --- HARDCODED INVENTORY MENU DATABASE ---
         var productsData = [
-            { id: 1, name: "Bigas (50)", price: 50.00, available: true },
-            { id: 2, name: "Bigas (55)", price: 55.00, available: true },
-            { id: 3, name: "Mantika", price: 0.00, available: false },
-            { id: 4, name: "Itlog", price: 10.00, available: true },
-            { id: 5, name: "Candy", price: 2.00, available: true },
-            { id: 6, name: "Coke (1.5)", price: 0.00, available: true },
-            { id: 7, name: "Coke (Kasalo)", price: 0.00, available: true },
-            { id: 8, name: "Coke (Mismo)", price: 0.00, available: true },
-            { id: 9, name: "Coke (8oz)", price: 14.00, available: true },
-            { id: 10, name: "Royal (1.5)", price: 0.00, available: true },
-            { id: 11, name: "Royal (Kasalo)", price: 0.00, available: true },
-            { id: 12, name: "Royal (Mismo)", price: 0.00, available: true },
-            { id: 13, name: "Royal (8oz)", price: 14.00, available: true },
-            { id: 14, name: "Sprite (1.5)", price: 0.00, available: true },
-            { id: 15, name: "Sprite (Kasalo)", price: 0.00, available: true },
-            { id: 16, name: "Sprite (Mismo)", price: 0.00, available: true },
-            { id: 17, name: "Sprite (8oz)", price: 14.00, available: true },
-            { id: 18, name: "Mt. Dew (Kasalo)", price: 0.00, available: true },
-            { id: 19, name: "Mt. Dew (12oz)", price: 18.00, available: true },
-            { id: 20, name: "Mt. Dew (8oz)", price: 0.00, available: false },
-            { id: 21, name: "Dutchmill (Small)", price: 0.00, available: true },
-            { id: 22, name: "Dutchmill (Big)", price: 0.00, available: true },
-            { id: 23, name: "Chuckie (Small)", price: 0.00, available: true },
-            { id: 24, name: "Chuckie (Big)", price: 0.00, available: true },
-            { id: 25, name: "Yakult", price: 0.00, available: true },
-            { id: 26, name: "Cobra", price: 0.00, available: false },
-            { id: 27, name: "Sting", price: 0.00, available: false },
-            { id: 28, name: "Sterilized", price: 0.00, available: false },
-            { id: 29, name: "Pineapple Juice", price: 0.00, available: false },
-            { id: 30, name: "Water (500ml)", price: 0.00, available: false },
-            { id: 31, name: "Water (750ml)", price: 0.00, available: false },
-            { id: 32, name: "RedHorse (500ml)", price: 0.00, available: false },
-            { id: 33, name: "RedHorse (1L)", price: 0.00, available: false },
-            { id: 34, name: "Pale Pilsen", price: 0.00, available: false },
-            { id: 35, name: "Pale Pilsen (1L)", price: 0.00, available: false },
-            { id: 36, name: "San Miguel (Lights)", price: 0.00, available: false },
-            { id: 37, name: "San Miguel (Apple)", price: 0.00, available: false },
-            { id: 38, name: "Rebisco (Cracker)", price: 0.00, available: false },
-            { id: 39, name: "Rebisco (Choco)", price: 0.00, available: false },
-            { id: 40, name: "Rebisco (Strawberry)", price: 0.00, available: false },
-            { id: 41, name: "Skyflakes", price: 0.00, available: false },
-            { id: 42, name: "Hansel (Cracker)", price: 0.00, available: false },
-            { id: 43, name: "Hansel (Choco)", price: 0.00, available: false },
-            { id: 44, name: "Hansel (Mocha)", price: 0.00, available: false },
-            { id: 45, name: "Buttercream", price: 0.00, available: false },
-            { id: 46, name: "Fita", price: 0.00, available: false },
-            { id: 47, name: "Overload", price: 0.00, available: false },
-            { id: 48, name: "WhattaTops", price: 0.00, available: false },
-            { id: 49, name: "FudgeeBar", price: 0.00, available: false },
-            { id: 50, name: "Marlboro", price: 0.00, available: false },
-            { id: 51, name: "Fortune", price: 0.00, available: false },
-            { id: 52, name: "Others", price: 0.00, available: true }
+{ id: 1, name: "Others", price: 0.00, available: true},
+{ id: 2, name: "Bigas (50)", price: 50.00, available: true},
+{ id: 3, name: "Bigas (55)", price: 55.00, available: true},
+{ id: 4, name: "Mantika", price: 35.00, available: false},
+{ id: 5, name: "Itlog", price: 10.00, available: true},
+{ id: 6, name: "Candy", price: 2.00, available: true},
+{ id: 7, name: "Coke (1.5)", price: 73.00, available: true},
+{ id: 8, name: "Coke (Kasalo)", price: 34.00, available: true},
+{ id: 9, name: "Coke (Mismo)", price: 23.00, available: true},
+{ id: 10, name: "Coke (8oz)", price: 14.00, available: true},
+{ id: 11, name: "Royal (1.5)", price: 73.00, available: true},
+{ id: 12, name: "Royal (Kasalo)", price: 34.00, available: true},
+{ id: 13, name: "Royal (Mismo)", price: 23.00, available: true},
+{ id: 14, name: "Royal (8oz)", price: 14.00, available: true},
+{ id: 15, name: "Sprite (1.5)", price: 73.00, available: true},
+{ id: 16, name: "Sprite (Kasalo)", price: 34.00, available: true},
+{ id: 17, name: "Sprite (Mismo)", price: 23.00, available: true},
+{ id: 18, name: "Sprite (8oz)", price: 14.00, available: true},
+{ id: 19, name: "Mt. Dew (Kasalo)", price: 34.00, available: true},
+{ id: 20, name: "Mt. Dew (12oz)", price: 20.00, available: true},
+{ id: 21, name: "Mt. Dew (8oz)", price: 14.00, available: false},
+{ id: 22, name: "Dutchmill (Small)", price: 15.00, available: true},
+{ id: 23, name: "Dutchmill (Big)", price: 26.00, available: true},
+{ id: 24, name: "Chuckie (Small)", price: 18.00, available: true},
+{ id: 25, name: "Chuckie (Big)", price: 28.00, available: true},
+{ id: 26, name: "Yakult", price: 13.00, available: true},
+{ id: 27, name: "Delight", price: 13.00, available: true},
+{ id: 28, name: "Cobra", price: 22.00, available: true},
+{ id: 29, name: "Sting", price: 22.00, available: true},
+{ id: 30, name: "Sterilized", price: 32.00, available: true},
+{ id: 31, name: "Pineapple Juice", price: 36.00, available: true},
+{ id: 32, name: "Water (500ml)", price: 10.00, available: true},
+{ id: 33, name: "Water (750ml)", price: 15.00, available: true},
+{ id: 34, name: "Plus", price: 13.00, available: true},
+{ id: 35, name: "C2", price: 18.00, available: true},
+{ id: 36, name: "RedHorse (500ml)", price: 68.00, available: true},
+{ id: 37, name: "RedHorse (1L)", price: 125.00, available: true},
+{ id: 38, name: "Pale Pilsen", price: 48.00, available: true},
+{ id: 39, name: "Pale Pilsen (1L)", price: 123.00, available: true},
+{ id: 40, name: "San Miguel (Lights)", price: 53.00, available: true},
+{ id: 41, name: "San Miguel (Apple)", price: 45.00, available: true},
+{ id: 42, name: "Rebisco (Cracker)", price: 8.00, available: true},
+{ id: 43, name: "Hansel (Cracker)", price: 8.00, available: true},
+{ id: 44, name: "Skyflakes", price: 8.00, available: true},
+{ id: 45, name: "Stick Wafer", price: 9.00, available: true},
+{ id: 46, name: "Buttercream", price: 8.00, available: true},
+{ id: 47, name: "Fita", price: 8.00, available: true},
+{ id: 48, name: "Rebisco (Choco)", price: 9.00, available: true},
+{ id: 49, name: "Rebisco (Strawberry)", price: 9.00, available: true},
+{ id: 50, name: "Combi (Choco)", price: 9.00, available: true},
+{ id: 51, name: "Presto (Vanilla)", price: 9.00, available: true},
+{ id: 52, name: "Bingo (Choco)", price: 9.00, available: true},
+{ id: 53, name: "Hansel (Choco)", price: 9.00, available: true},
+{ id: 54, name: "Hansel (Mocha)", price: 9.00, available: true},
+{ id: 55, name: "Cheesecake", price: 11.00, available: true},
+{ id: 56, name: "WhattaTops (Strawberry)", price: 11.00, available: true},
+{ id: 57, name: "WhattaTops (Vanilla)", price: 11.00, available: true},
+{ id: 58, name: "WhattaTops (Cookies & Cream)", price: 11.00, available: true},
+{ id: 59, name: "Doowee Donut", price: 13.00, available: true},
+{ id: 60, name: "FudgeeBar (Choco)", price: 11.00, available: true},
+{ id: 61, name: "FudgeeBar (Macapuno)", price: 11.00, available: true},
+{ id: 62, name: "Overload (Mocha Butter)", price: 11.00, available: true},
+{ id: 63, name: "Quake (Choco)", price: 11.00, available: true},
+{ id: 64, name: "Lava Cake (Matcha)", price: 11.00, available: true},
+{ id: 65, name: "ChocoMucho (Choco)", price: 10.00, available: true},
+{ id: 66, name: "ChocoMucho (White Choco)", price: 10.00, available: true},
+{ id: 67, name: "Presto (Peanut)", price: 10.00, available: true},
+{ id: 68, name: "Cream-O (Vanilla)", price: 10.00, available: true},
+{ id: 69, name: "Cream-O (Choco)", price: 10.00, available: true},
+{ id: 70, name: "Oreo (Vanilla)", price: 11.00, available: true},
+{ id: 71, name: "Oreo (Choco)", price: 11.00, available: true},
+{ id: 72, name: "Marlboro", price: 10.00, available: true},
+{ id: 73, name: "Fortune", price: 9.00, available: true},
+{ id: 74, name: "Mighty", price: 9.00, available: true},
+{ id: 75, name: "Camel", price: 8.00, available: true},
+{ id: 76, name: "Winston", price: 10.00, available: true},
+{ id: 77, name: "Chesterfield", price: 7.00, available: true},
+{ id: 78, name: "Bonus", price: 6.00, available: true},
+{ id: 79, name: "Memphis", price: 6.00, available: true},
+{ id: 80, name: "Asukal (White)", price: 0.00, available: true},
+{ id: 81, name: "Asukal (Washed)", price: 0.00, available: true},
+{ id: 82, name: "Asukal (Brown)", price: 0.00, available: true},
+{ id: 83, name: "Great Taste (20g)", price: 0.00, available: true},
+{ id: 84, name: "Nescafe (25g)", price: 0.00, available: true},
+{ id: 85, name: "Aji (11g)", price: 5.00, available: true},
+{ id: 86, name: "Aji (24g)", price: 0.00, available: true},
+{ id: 87, name: "Eden (Box)", price: 60.00, available: true},
+{ id: 88, name: "Eden (Sachet)", price: 20.00, available: true},
+{ id: 89, name: "Coco Mama", price: 39.00, available: true},
+{ id: 90, name: "Ramen", price: 16.00, available: true},
+{ id: 91, name: "Ram Tomato Paste (70g)", price: 18.00, available: true},
+{ id: 92, name: "Del Monte Tomato Paste (150g)", price: 38.00, available: true},
+{ id: 93, name: "Tomato Sauce Original (115g)", price: 23.00, available: true},
+{ id: 94, name: "Tomato Sauce Original (200g)", price: 28.00, available: true},
+{ id: 95, name: "Tomato Sauce Original (250g)", price: 33.00, available: true},
+{ id: 96, name: "Caldereta Sauce (200g)", price: 35.00, available: true},
+{ id: 97, name: "Afritada Sauce (200g)", price: 35.00, available: true},
+{ id: 98, name: "Tasty Boy (65g)", price: 15.00, available: true},
+{ id: 99, name: "Crispy Fry (62g)", price: 20.00, available: true},
+{ id: 100, name: "Shampoo", price: 8.00, available: true},
+{ id: 101, name: "Conditioner", price: 10.00, available: true},
+{ id: 102, name: "Toothpaste", price: 12.00, available: true},
+{ id: 103, name: "Downy ", price: 9.00, available: true},
+{ id: 104, name: "Downy Perfume", price: 12.00, available: true},
         ];
 
         var cart = [];
         var globalTotal = 0;
-
-        // Fetch initialization data via deployed web API structure
-        function initInventory() {
-            const url = "https://script.google.com/macros/s/AKfycbwrXF5q77rM93eugEEUFmcjIID_mvsfREeOCNOTlp772y41aSncaJwEiE7hNS4kV1_W2Q/exec";
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network configuration fault.");
-                    }
-                    return response.json();
-                })
-                .then(sheetsData => {
-                    if (sheetsData && sheetsData.length > 0) {
-                        productsData = sheetsData;
-                    }
-                    renderCatalog(productsData);
-                })
-                .catch(err => {
-                    console.log("Could not reach Google Sheets API. Using local code array data.", err);
-                    renderCatalog(productsData);
-                });
-        }
 
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
@@ -630,7 +659,7 @@
         }
 
         window.onload = function() {
-            initInventory();
+            renderCatalog(productsData);
         };
     </script>
 </body>
