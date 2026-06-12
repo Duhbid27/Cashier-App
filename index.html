@@ -437,7 +437,7 @@
 
         function calculateItemCost(item) {
             if (item.name.toLowerCase().indexOf("candy") !== -1) {
-                var bundles of four = Math.floor(item.qty / 4);
+                var bundlesOfFour = Math.floor(item.qty / 4);
                 var remainder = item.qty % 4;
                 return (bundlesOfFour * 5.00) + (remainder * 2.00);
             }
