@@ -65,7 +65,7 @@
             gap: 15px;
         }
 
-        /* --- PRODUCT CARD STYLES (TEXT ONLY) --- */
+        /* --- PRODUCT CARD STYLES --- */
         .product-card {
             width: calc(33.33% - 10px);
             min-height: 120px;
@@ -161,8 +161,23 @@
         .cart-item-meta {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 22px;
             font-weight: bold;
+        }
+
+        /* Dynamic Custom Amount Styling */
+        .others-price-input {
+            width: 110px;
+            height: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            background-color: #1f2937;
+            color: #10b981;
+            border: 2px solid #10b981;
+            border-radius: 6px;
+            padding: 4px;
         }
 
         .cart-controls {
@@ -210,10 +225,6 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        
-        .frac-btn:active {
-            background-color: #374151;
-        }
 
         .delete-btn {
             background-color: #ef4444;
@@ -226,7 +237,6 @@
             cursor: pointer;
         }
 
-        /* Large Typeable Numeric Input Box for Bad Eyesight */
         .item-qty-input {
             width: 75px;
             height: 50px;
@@ -246,15 +256,30 @@
             border-top: 3px solid #374151;
         }
 
-        .total-row {
+        .total-row, .payment-row, .change-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        .total-label { font-size: 24px; font-weight: bold; }
-        .total-amount { font-size: 36px; font-weight: 900; color: #10b981; }
+        .total-label, .payment-label, .change-label { font-size: 22px; font-weight: bold; }
+        .total-amount { font-size: 34px; font-weight: 900; color: #10b981; }
+        
+        .payment-input {
+            width: 160px;
+            height: 45px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: right;
+            background-color: #1f2937;
+            color: #ffffff;
+            border: 2px solid #9ca3af;
+            border-radius: 6px;
+            padding-right: 8px;
+        }
+
+        .change-amount { font-size: 30px; font-weight: 900; color: #f59e0b; }
 
         .clear-all-btn {
             width: 100%;
@@ -266,6 +291,7 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -289,8 +315,19 @@
             <div class="cart-footer">
                 <div class="total-row">
                     <span class="total-label">TOTAL:</span>
-                    <span id="totalDisplay" class="total-amount">0.00</span>
+                    <span id="totalDisplay" class="total-amount">₱0.00</span>
                 </div>
+                
+                <div class="payment-row">
+                    <span class="payment-label">PAYMENT:</span>
+                    <input type="number" id="paymentInput" class="payment-input" placeholder="0.00" step="0.01" min="0" oninput="calculateChange()">
+                </div>
+
+                <div class="change-row">
+                    <span class="change-label">CHANGE:</span>
+                    <span id="changeDisplay" class="change-amount">₱0.00</span>
+                </div>
+
                 <button class="clear-all-btn" onclick="clearCart()">CLEAR ALL</button>
             </div>
         </div>
@@ -298,64 +335,137 @@
     </div>
 
     <script>
-        // --- HARDCODED INVENTORY DATA SYSTEM ---
+        // --- HARDCODED INVENTORY BACKUP ---
         var productsData = [
-            { id: 1, name: "Bigas (50)", price: 50.00, available: true },
-            { id: 2, name: "Bigas (55)", price: 55.00, available: true },
-            { id: 3, name: "Mantika", price: 0.00, available: false },
-            { id: 4, name: "Itlog", price: 10.00, available: true },
-            { id: 5, name: "Candy", price: 2.00, available: true }, // Added Candy with standard individual pricing display
-            { id: 6, name: "Coke (1.5)", price: 0.00, available: true },
-            { id: 7, name: "Coke (Kasalo)", price: 0.00, available: true },
-            { id: 8, name: "Coke (Mismo)", price: 0.00, available: true },
-            { id: 9, name: "Coke (8oz)", price: 14.00, available: true },
-            { id: 10, name: "Royal (1.5)", price: 0.00, available: true },
-            { id: 11, name: "Royal (Kasalo)", price: 0.00, available: true },
-            { id: 12, name: "Royal (Mismo)", price: 0.00, available: true },
-            { id: 13, name: "Royal (8oz)", price: 14.00, available: true },
-            { id: 14, name: "Sprite (1.5)", price: 0.00, available: true },
-            { id: 15, name: "Sprite (Kasalo)", price: 0.00, available: true },
-            { id: 16, name: "Sprite (Mismo)", price: 0.00, available: true },
-            { id: 17, name: "Sprite (8oz)", price: 14.00, available: true },
-            { id: 18, name: "Mt. Dew (Kasalo)", price: 0.00, available: true },
-            { id: 19, name: "Mt. Dew (12oz)", price: 18.00, available: true },
-            { id: 20, name: "Mt. Dew (8oz)", price: 0.00, available: false },
-            { id: 21, name: "Dutchmill (Small)", price: 0.00, available: true },
-            { id: 22, name: "Dutchmill (Big)", price: 0.00, available: true },
-            { id: 23, name: "Chuckie (Small)", price: 0.00, available: true },
-            { id: 24, name: "Chuckie (Big)", price: 0.00, available: true },
-            { id: 25, name: "Yakult", price: 0.00, available: true },
-            { id: 26, name: "Cobra", price: 0.00, available: false },
-            { id: 27, name: "Sting", price: 0.00, available: false },
-            { id: 28, name: "Sterilized", price: 0.00, available: false },
-            { id: 29, name: "Pineapple Juice", price: 0.00, available: false },
-            { id: 30, name: "Water (500ml)", price: 0.00, available: false },
-            { id: 31, name: "Water (750ml)", price: 0.00, available: false },
-            { id: 32, name: "RedHorse (500ml)", price: 0.00, available: false },
-            { id: 33, name: "RedHorse (1L)", price: 0.00, available: false },
-            { id: 34, name: "Pale Pilsen", price: 0.00, available: false },
-            { id: 35, name: "Pale Pilsen (1L)", price: 0.00, available: false },
-            { id: 36, name: "San Miguel (Lights)", price: 0.00, available: false },
-            { id: 37, name: "San Miguel (Apple)", price: 0.00, available: false },
-            { id: 38, name: "Rebisco (Cracker)", price: 0.00, available: false },
-            { id: 39, name: "Rebisco (Choco)", price: 0.00, available: false },
-            { id: 40, name: "Rebisco (Strawberry)", price: 0.00, available: false },
-            { id: 41, name: "Skyflakes", price: 0.00, available: false },
-            { id: 42, name: "Hansel (Cracker)", price: 0.00, available: false },
-            { id: 43, name: "Hansel (Choco)", price: 0.00, available: false },
-            { id: 44, name: "Hansel (Mocha)", price: 0.00, available: false },
-            { id: 45, name: "Buttercream", price: 0.00, available: false },
-            { id: 46, name: "Fita", price: 0.00, available: false },
-            { id: 47, name: "Overload", price: 0.00, available: false },
-            { id: 48, name: "WhattaTops", price: 0.00, available: false },
-            { id: 49, name: "FudgeeBar", price: 0.00, available: false },
-            { id: 50, name: "Marlboro", price: 0.00, available: false },
-            { id: 51, name: "Fortune", price: 0.00, available: false },
+{ id: 1, name: "Bigas (50)", price: 50.00, available: true},
+{ id: 2, name: "Bigas (55)", price: 55.00, available: true},
+{ id: 3, name: "Mantika", price: 35.00, available: false},
+{ id: 4, name: "Itlog", price: 10.00, available: true},
+{ id: 5, name: "Candy", price: 2.00, available: true},
+{ id: 6, name: "Coke (1.5)", price: 73.00, available: true},
+{ id: 7, name: "Coke (Kasalo)", price: 34.00, available: true},
+{ id: 8, name: "Coke (Mismo)", price: 23.00, available: true},
+{ id: 9, name: "Coke (8oz)", price: 14.00, available: true},
+{ id: 10, name: "Royal (1.5)", price: 73.00, available: true},
+{ id: 11, name: "Royal (Kasalo)", price: 34.00, available: true},
+{ id: 12, name: "Royal (Mismo)", price: 23.00, available: true},
+{ id: 13, name: "Royal (8oz)", price: 14.00, available: true},
+{ id: 14, name: "Sprite (1.5)", price: 73.00, available: true},
+{ id: 15, name: "Sprite (Kasalo)", price: 34.00, available: true},
+{ id: 16, name: "Sprite (Mismo)", price: 23.00, available: true},
+{ id: 17, name: "Sprite (8oz)", price: 14.00, available: true},
+{ id: 18, name: "Mt. Dew (Kasalo)", price: 34.00, available: true},
+{ id: 19, name: "Mt. Dew (12oz)", price: 20.00, available: true},
+{ id: 20, name: "Mt. Dew (8oz)", price: 14.00, available: false},
+{ id: 21, name: "Dutchmill (Small)", price: 15.00, available: true},
+{ id: 22, name: "Dutchmill (Big)", price: 26.00, available: true},
+{ id: 23, name: "Chuckie (Small)", price: 18.00, available: true},
+{ id: 24, name: "Chuckie (Big)", price: 28.00, available: true},
+{ id: 25, name: "Yakult", price: 13.00, available: true},
+{ id: 26, name: "Delight", price: 13.00, available: true},
+{ id: 27, name: "Cobra", price: 22.00, available: true},
+{ id: 28, name: "Sting", price: 22.00, available: true},
+{ id: 29, name: "Sterilized", price: 32.00, available: true},
+{ id: 30, name: "Pineapple Juice", price: 36.00, available: true},
+{ id: 31, name: "Water (500ml)", price: 10.00, available: true},
+{ id: 32, name: "Water (750ml)", price: 15.00, available: true},
+{ id: 33, name: "Plus", price: 13.00, available: true},
+{ id: 34, name: "C2", price: 18.00, available: true},
+{ id: 35, name: "RedHorse (500ml)", price: 68.00, available: true},
+{ id: 36, name: "RedHorse (1L)", price: 125.00, available: true},
+{ id: 37, name: "Pale Pilsen", price: 48.00, available: true},
+{ id: 38, name: "Pale Pilsen (1L)", price: 123.00, available: true},
+{ id: 39, name: "San Miguel (Lights)", price: 53.00, available: true},
+{ id: 40, name: "San Miguel (Apple)", price: 45.00, available: true},
+{ id: 41, name: "Rebisco (Cracker)", price: 8.00, available: true},
+{ id: 42, name: "Hansel (Cracker)", price: 8.00, available: true},
+{ id: 43, name: "Skyflakes", price: 8.00, available: true},
+{ id: 44, name: "Stick Wafer", price: 9.00, available: true},
+{ id: 45, name: "Buttercream", price: 8.00, available: true},
+{ id: 46, name: "Fita", price: 8.00, available: true},
+{ id: 47, name: "Rebisco (Choco)", price: 9.00, available: true},
+{ id: 48, name: "Rebisco (Strawberry)", price: 9.00, available: true},
+{ id: 49, name: "Combi (Choco)", price: 9.00, available: true},
+{ id: 50, name: "Presto (Vanilla)", price: 9.00, available: true},
+{ id: 51, name: "Bingo (Choco)", price: 9.00, available: true},
+{ id: 52, name: "Hansel (Choco)", price: 9.00, available: true},
+{ id: 53, name: "Hansel (Mocha)", price: 9.00, available: true},
+{ id: 54, name: "Cheesecake", price: 11.00, available: true},
+{ id: 55, name: "WhattaTops (Strawberry)", price: 11.00, available: true},
+{ id: 56, name: "WhattaTops (Vanilla)", price: 11.00, available: true},
+{ id: 57, name: "WhattaTops (Cookies & Cream)", price: 11.00, available: true},
+{ id: 58, name: "Doowee Donut", price: 13.00, available: true},
+{ id: 59, name: "FudgeeBar (Choco)", price: 11.00, available: true},
+{ id: 60, name: "FudgeeBar (Macapuno)", price: 11.00, available: true},
+{ id: 61, name: "Overload (Mocha Butter)", price: 11.00, available: true},
+{ id: 62, name: "Quake (Choco)", price: 11.00, available: true},
+{ id: 63, name: "Lava Cake (Matcha)", price: 11.00, available: true},
+{ id: 64, name: "ChocoMucho (Choco)", price: 10.00, available: true},
+{ id: 65, name: "ChocoMucho (White Choco)", price: 10.00, available: true},
+{ id: 66, name: "Presto (Peanut)", price: 10.00, available: true},
+{ id: 67, name: "Cream-O (Vanilla)", price: 10.00, available: true},
+{ id: 68, name: "Cream-O (Choco)", price: 10.00, available: true},
+{ id: 69, name: "Oreo (Vanilla)", price: 11.00, available: true},
+{ id: 70, name: "Oreo (Choco)", price: 11.00, available: true},
+{ id: 71, name: "Marlboro", price: 10.00, available: true},
+{ id: 72, name: "Fortune", price: 9.00, available: true},
+{ id: 73, name: "Mighty", price: 9.00, available: true},
+{ id: 74, name: "Camel", price: 8.00, available: true},
+{ id: 75, name: "Winston", price: 10.00, available: true},
+{ id: 76, name: "Chesterfield", price: 7.00, available: true},
+{ id: 77, name: "Bonus", price: 6.00, available: true},
+{ id: 78, name: "Memphis", price: 6.00, available: true},
+{ id: 79, name: "Asukal (White)", price: 0.00, available: true},
+{ id: 80, name: "Asukal (Washed)", price: 0.00, available: true},
+{ id: 81, name: "Asukal (Brown)", price: 0.00, available: true},
+{ id: 82, name: "Great Taste (20g)", price: 0.00, available: true},
+{ id: 83, name: "Nescafe (25g)", price: 0.00, available: true},
+{ id: 84, name: "Aji (11g)", price: 5.00, available: true},
+{ id: 85, name: "Aji (24g)", price: 0.00, available: true},
+{ id: 86, name: "Eden (Box)", price: 60.00, available: true},
+{ id: 87, name: "Eden (Sachet)", price: 20.00, available: true},
+{ id: 88, name: "Coco Mama", price: 0.00, available: true},
+{ id: 89, name: "Ramen", price: 0.00, available: true},
+{ id: 90, name: "Ramen (Spicy)", price: 0.00, available: true},
+{ id: 91, name: "Ramen (Seafoods)", price: 0.00, available: true},
+{ id: 92, name: "Ram Tomato Paste (70g)", price: 18.00, available: true},
+{ id: 93, name: "Del Monte Tomato Paste (150g)", price: 38.00, available: true},
+{ id: 94, name: "Tomato Sauce Original (115g)", price: 23.00, available: true},
+{ id: 95, name: "Tomato Sauce Original (200g)", price: 28.00, available: true},
+{ id: 96, name: "Tomato Sauce Original (250g)", price: 33.00, available: true},
+{ id: 97, name: "Caldereta Sauce (200g)", price: 35.00, available: true},
+{ id: 98, name: "Afritada Sauce (200g)", price: 35.00, available: true},
+{ id: 99, name: "Tasty Boy (65g)", price: 15.00, available: true},
+{ id: 100, name: "Crispy Fry Spicy (62g)", price: 20.00, available: true},
+{ id: 101, name: "Crispy Fry Garlic (62g)", price: 20.00, available: true},
+{ id: 102, name: "Crispy Fry Original (62g)", price: 20.00, available: true},
+{ id: 103, name: "Shampoo", price: 8.00, available: true},
+{ id: 104, name: "Conditioner", price: 10.00, available: true},
         ];
 
         var cart = [];
+        var globalTotal = 0;
 
-        // Render inventory menu items grid (Text only, clean sizing)
+        // Initialize connection with Google Sheet
+        function initInventory() {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(sheetsData) {
+                        if (sheetsData && sheetsData.length > 0) {
+                            productsData = sheetsData;
+                        }
+                        renderCatalog(productsData);
+                    })
+                    .withFailureHandler(function(err) {
+                        console.log("Sheets access failed. Loaded local data.", err);
+                        renderCatalog(productsData);
+                    })
+                    .getSheetsInventory();
+            } else {
+                renderCatalog(productsData);
+            }
+        }
+
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
             grid.innerHTML = "";
@@ -371,10 +481,11 @@
                     card.className = "product-card unavailable";
                 }
                 
-                // Show standard pricing note if it's candy
                 var priceText = '₱' + p.price.toFixed(2);
                 if (p.name.toLowerCase().indexOf("candy") !== -1) {
                     priceText = "₱2.00 (4 for ₱5)";
+                } else if (p.name.toLowerCase() === "others") {
+                    priceText = "₱ Manual";
                 }
 
                 card.innerHTML = 
@@ -385,7 +496,6 @@
             }
         }
 
-        // Live text filter execution loop
         function filterProducts() {
             var query = document.getElementById("searchBar").value.toLowerCase();
             var filtered = [];
@@ -397,10 +507,8 @@
             renderCatalog(filtered);
         }
 
-        // Custom Pricing Engine for dynamic item conditions
         function calculateItemCost(item) {
             if (item.name.toLowerCase().indexOf("candy") !== -1) {
-                // Bulk Pricing: 4 pcs for 5 pesos, rest are 2 pesos each
                 var bundlesOfFour = Math.floor(item.qty / 4);
                 var remainder = item.qty % 4;
                 return (bundlesOfFour * 5.00) + (remainder * 2.00);
@@ -408,7 +516,6 @@
             return item.price * item.qty;
         }
 
-        // Add element to transactional storage array
         function addToCart(id) {
             var found = false;
             for (var i = 0; i < cart.length; i++) {
@@ -438,7 +545,6 @@
             updateCartUI();
         }
 
-        // Adjust entry volumes via +/- buttons safely
         function changeQty(id, delta) {
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].id === id) {
@@ -452,7 +558,6 @@
             updateCartUI();
         }
 
-        // Direct typed input handler
         function updateTypedQty(id, inputElement) {
             var value = parseFloat(inputElement.value);
             if (isNaN(value) || value <= 0) {
@@ -467,7 +572,21 @@
             updateCartUI();
         }
 
-        // Explicit single item array truncation
+        // Direct item cost modulation for "Others" card interaction
+        function updateOthersPrice(id, inputElement) {
+            var value = parseFloat(inputElement.value);
+            if (isNaN(value) || value < 0) {
+                value = 0;
+            }
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].price = value;
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
         function removeLineItem(id) {
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].id === id) {
@@ -480,33 +599,54 @@
 
         function clearCart() {
             cart = [];
+            document.getElementById("paymentInput").value = "";
             updateCartUI();
         }
 
-        // Primary UI processing cycle
+        function calculateChange() {
+            var paymentInput = document.getElementById("paymentInput").value;
+            var payment = parseFloat(paymentInput);
+            var changeDisplay = document.getElementById("changeDisplay");
+            
+            if (isNaN(payment) || paymentInput === "") {
+                changeDisplay.innerText = "₱0.00";
+                return;
+            }
+
+            var change = payment - globalTotal;
+            changeDisplay.innerText = "₱" + (change >= 0 ? change.toFixed(2) : "0.00 (Short)");
+        }
+
         function updateCartUI() {
             var listContainer = document.getElementById("cartItemsList");
             listContainer.innerHTML = "";
-            var runningTotal = 0;
+            globalTotal = 0;
 
             for (var i = 0; i < cart.length; i++) {
                 var item = cart[i];
-                var itemCost = calculateItemCost(item); // Uses custom dynamic price calculation rules
-                runningTotal += itemCost;
+                var itemCost = calculateItemCost(item);
+                globalTotal += itemCost;
 
                 var itemNameLower = item.name.toLowerCase();
                 var isRice = itemNameLower.indexOf("bigas") !== -1;
                 var isOil = itemNameLower.indexOf("mantika") !== -1;
+                var isOthers = itemNameLower === "others";
                 
                 var stepVal = (isRice || isOil) ? "0.01" : "1";
 
                 var row = document.createElement("div");
                 row.className = "cart-item";
                 
+                // Allows typing directly in the row if the item is named "Others"
+                var priceDisplayElement = '<span>₱' + itemCost.toFixed(2) + '</span>';
+                if (isOthers) {
+                    priceDisplayElement = '<div>₱ <input type="number" class="others-price-input" value="' + item.price + '" step="0.5" oninput="updateOthersPrice(' + item.id + ', this)"></div>';
+                }
+
                 var innerHTMLString = 
                     '<div class="cart-item-meta">' +
                         '<span>' + item.name + '</span>' +
-                        '<span>₱' + itemCost.toFixed(2) + '</span>' +
+                        priceDisplayElement +
                     '</div>' +
                     '<div class="cart-controls">' +
                         '<div class="control-row-main">' +
@@ -536,11 +676,12 @@
                 listContainer.appendChild(row);
             }
 
-            document.getElementById("totalDisplay").innerText = "₱" + runningTotal.toFixed(2);
+            document.getElementById("totalDisplay").innerText = "₱" + globalTotal.toFixed(2);
+            calculateChange();
         }
 
         window.onload = function() {
-            renderCatalog(productsData);
+            initInventory();
         };
     </script>
 </body>
