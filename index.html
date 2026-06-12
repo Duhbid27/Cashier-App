@@ -379,4 +379,237 @@
             { id: 40, name: "Rebisco (Strawberry)", price: 0.00, available: false },
             { id: 41, name: "Skyflakes", price: 0.00, available: false },
             { id: 42, name: "Hansel (Cracker)", price: 0.00, available: false },
-            { id
+            { id: 43, name: "Hansel (Choco)", price: 0.00, available: false },
+            { id: 44, name: "Hansel (Mocha)", price: 0.00, available: false },
+            { id: 45, name: "Buttercream", price: 0.00, available: false },
+            { id: 46, name: "Fita", price: 0.00, available: false },
+            { id: 47, name: "Overload", price: 0.00, available: false },
+            { id: 48, name: "WhattaTops", price: 0.00, available: false },
+            { id: 49, name: "FudgeeBar", price: 0.00, available: false },
+            { id: 50, name: "Marlboro", price: 0.00, available: false },
+            { id: 51, name: "Fortune", price: 0.00, available: false },
+            { id: 52, name: "Others", price: 0.00, available: true }
+        ];
+
+        var cart = [];
+        var globalTotal = 0;
+
+        function renderCatalog(items) {
+            var grid = document.getElementById("productsGrid");
+            grid.innerHTML = "";
+            
+            for (var i = 0; i < items.length; i++) {
+                var p = items[i];
+                var card = document.createElement("div");
+                
+                if (p.available) {
+                    card.className = "product-card";
+                    card.setAttribute("onclick", "addToCart(" + p.id + ")");
+                } else {
+                    card.className = "product-card unavailable";
+                }
+                
+                var priceText = '₱' + p.price.toFixed(2);
+                if (p.name.toLowerCase().indexOf("candy") !== -1) {
+                    priceText = "₱2.00 (4 for ₱5)";
+                } else if (p.name.toLowerCase() === "others") {
+                    priceText = "₱ Manual";
+                }
+
+                card.innerHTML = 
+                    '<div class="product-title">' + p.name + '</div>' +
+                    '<div class="product-price">' + (p.available ? priceText : 'OUT OF STOCK') + '</div>';
+                
+                grid.appendChild(card);
+            }
+        }
+
+        function filterProducts() {
+            var query = document.getElementById("searchBar").value.toLowerCase();
+            var filtered = [];
+            for (var i = 0; i < productsData.length; i++) {
+                if (productsData[i].name.toLowerCase().indexOf(query) !== -1) {
+                    filtered.push(productsData[i]);
+                }
+            }
+            renderCatalog(filtered);
+        }
+
+        function calculateItemCost(item) {
+            if (item.name.toLowerCase().indexOf("candy") !== -1) {
+                var bundles of four = Math.floor(item.qty / 4);
+                var remainder = item.qty % 4;
+                return (bundlesOfFour * 5.00) + (remainder * 2.00);
+            }
+            return item.price * item.qty;
+        }
+
+        function addToCart(id) {
+            var found = false;
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty = parseFloat((cart[i].qty + 1).toFixed(2));
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                var product = null;
+                for (var j = 0; j < productsData.length; j++) {
+                    if (productsData[j].id === id) {
+                        product = productsData[j];
+                        break;
+                    }
+                }
+                if (product) {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        qty: 1.00
+                    });
+                }
+            }
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty = parseFloat((cart[i].qty + delta).toFixed(2));
+                    if (cart[i].qty <= 0) {
+                        cart.splice(i, 1);
+                    }
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateTypedQty(id, inputElement) {
+            var value = parseFloat(inputElement.value);
+            if (isNaN(value) || value <= 0) {
+                value = 1;
+            }
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].qty = parseFloat(value.toFixed(2));
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateOthersPrice(id, inputElement) {
+            var value = parseFloat(inputElement.value);
+            if (isNaN(value) || value < 0) {
+                value = 0;
+            }
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart[i].price = value;
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        function removeLineItem(id) {
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].id === id) {
+                    cart.splice(i, 1);
+                    break;
+                }
+            }
+            updateCartUI();
+        }
+
+        function clearCart() {
+            cart = [];
+            document.getElementById("paymentInput").value = "";
+            updateCartUI();
+        }
+
+        function calculateChange() {
+            var paymentInput = document.getElementById("paymentInput").value;
+            var payment = parseFloat(paymentInput);
+            var changeDisplay = document.getElementById("changeDisplay");
+            
+            if (isNaN(payment) || paymentInput === "") {
+                changeDisplay.innerText = "₱0.00";
+                return;
+            }
+
+            var change = payment - globalTotal;
+            changeDisplay.innerText = "₱" + (change >= 0 ? change.toFixed(2) : "0.00 (Short)");
+        }
+
+        function updateCartUI() {
+            var listContainer = document.getElementById("cartItemsList");
+            listContainer.innerHTML = "";
+            globalTotal = 0;
+
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                var itemCost = calculateItemCost(item);
+                globalTotal += itemCost;
+
+                var itemNameLower = item.name.toLowerCase();
+                var isRice = itemNameLower.indexOf("bigas") !== -1;
+                var isOil = itemNameLower.indexOf("mantika") !== -1;
+                var isOthers = itemNameLower === "others";
+                
+                var stepVal = (isRice || isOil) ? "0.01" : "1";
+
+                var row = document.createElement("div");
+                row.className = "cart-item";
+                
+                var priceDisplayElement = '<span>₱' + itemCost.toFixed(2) + '</span>';
+                if (isOthers) {
+                    // Changed oninput to onchange so the keyboard stays up on older iPads while you type numbers
+                    priceDisplayElement = '<div>₱ <input type="number" class="others-price-input" value="' + (item.price === 0 ? '' : item.price) + '" placeholder="0.00" step="0.5" onchange="updateOthersPrice(' + item.id + ', this)"></div>';
+                }
+
+                var innerHTMLString = 
+                    '<div class="cart-item-meta">' +
+                        '<span>' + item.name + '</span>' +
+                        priceDisplayElement +
+                    '</div>' +
+                    '<div class="cart-controls">' +
+                        '<div class="control-row-main">' +
+                            '<button class="qty-btn minus" onclick="changeQty(' + item.id + ', -1)">-1</button>' +
+                            '<input type="number" step="' + stepVal + '" class="item-qty-input" value="' + item.qty + '" onchange="updateTypedQty(' + item.id + ', this)">' +
+                            '<button class="qty-btn plus" onclick="changeQty(' + item.id + ', 1)">+1</button>' +
+                            '<button class="delete-btn" onclick="removeLineItem(' + item.id + ')">REMOVE</button>' +
+                        '</div>';
+                
+                if (isRice) {
+                    innerHTMLString += 
+                        '<div class="fraction-row">' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.25)">+0.25</button>' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.33)">+0.33</button>' +
+                        '</div>';
+                }
+                
+                if (isOil) {
+                    innerHTMLString += 
+                        '<div class="fraction-row">' +
+                            '<button class="frac-btn" onclick="changeQty(' + item.id + ', 0.50)">+0.50</button>' +
+                        '</div>';
+                }
+
+                innerHTMLString += '</div>';
+                row.innerHTML = innerHTMLString;
+                listContainer.appendChild(row);
+            }
+
+            document.getElementById("totalDisplay").innerText = "₱" + globalTotal.toFixed(2);
+            calculateChange();
+        }
+
+        window.onload = function() {
+            renderCatalog(productsData);
+        };
+    </script>
+</body>
+</html>
