@@ -38,9 +38,8 @@
         }
 
         .search-box-container {
-            padding: 15px;
+            padding: 15px 15px 5px 15px;
             background-color: #eaecef;
-            border-bottom: 2px solid #d1d5db;
         }
 
         .search-bar {
@@ -50,6 +49,40 @@
             font-weight: bold;
             border: 3px solid #9ca3af;
             border-radius: 8px;
+        }
+
+        /* --- ALPHABET FILTER BAR STYLES --- */
+        .alphabet-filter-container {
+            padding: 5px 15px 15px 15px;
+            background-color: #eaecef;
+            border-bottom: 2px solid #d1d5db;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .alphabet-btn {
+            background-color: #ffffff;
+            color: #1f2937;
+            border: 2px solid #9ca3af;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 38px;
+            text-align: center;
+            transition: all 0.1s ease;
+        }
+
+        .alphabet-btn:active {
+            transform: scale(0.95);
+        }
+
+        .alphabet-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
         }
 
         .grid-scroll {
@@ -286,6 +319,9 @@
             <div class="search-box-container">
                 <input type="text" id="searchBar" class="search-bar" placeholder="🔍 TYPE TO SEARCH ITEMS..." oninput="filterProducts()">
             </div>
+            
+            <div id="alphabetFilterBar" class="alphabet-filter-container"></div>
+
             <div class="grid-scroll">
                 <div id="productsGrid" class="products-grid"></div>
             </div>
@@ -321,185 +357,288 @@
         // --- HARDCODED INVENTORY MENU DATABASE ---
         var productsData = [
 { id: 1, name: "Others", price: 0.00},
-{ id: 2, name: "Bigas (50)", price: 50.00},
-{ id: 3, name: "Bigas (55)", price: 55.00},
-{ id: 4, name: "Mantika", price: 35.00},
-{ id: 5, name: "Itlog", price: 10.00},
-{ id: 6, name: "Candy", price: 2.00},
-{ id: 7, name: "Coke (1.5)", price: 73.00},
-{ id: 8, name: "Coke (Kasalo)", price: 34.00},
-{ id: 9, name: "Coke (Mismo)", price: 23.00},
-{ id: 10, name: "Coke (8oz)", price: 14.00},
-{ id: 11, name: "Royal (1.5)", price: 73.00},
-{ id: 12, name: "Royal (Kasalo)", price: 34.00},
-{ id: 13, name: "Royal (Mismo)", price: 23.00},
-{ id: 14, name: "Royal (8oz)", price: 14.00},
-{ id: 15, name: "Sprite (1.5)", price: 73.00},
-{ id: 16, name: "Sprite (Kasalo)", price: 34.00},
-{ id: 17, name: "Sprite (Mismo)", price: 23.00},
-{ id: 18, name: "Sprite (8oz)", price: 14.00},
-{ id: 19, name: "Mt. Dew (Kasalo)", price: 34.00},
-{ id: 20, name: "Mt. Dew (12oz)", price: 20.00},
-{ id: 21, name: "Mt. Dew (8oz)", price: 14.00},
-{ id: 22, name: "Dutchmill (Small)", price: 15.00},
-{ id: 23, name: "Dutchmill (Big)", price: 26.00},
-{ id: 24, name: "Chuckie (Small)", price: 18.00},
-{ id: 25, name: "Chuckie (Big)", price: 28.00},
-{ id: 26, name: "Yakult", price: 13.00},
-{ id: 27, name: "Delight", price: 13.00},
-{ id: 28, name: "Cobra", price: 22.00},
-{ id: 29, name: "Sting", price: 22.00},
-{ id: 30, name: "Sterilized", price: 32.00},
-{ id: 31, name: "Pineapple Juice", price: 36.00},
-{ id: 32, name: "Tubig (500ml)", price: 10.00},
-{ id: 33, name: "Tubig (750ml)", price: 15.00},
-{ id: 34, name: "Plus", price: 13.00},
+{ id: 2, name: "555 Sardines (Big)", price: 65.00},
+{ id: 3, name: "555 Sardines (Small)", price: 28.00},
+{ id: 4, name: "555 Tuna (Caldereta, Afritada, Mechado, Adobo)", price: 36.00},
+{ id: 5, name: "555 Tuna (Spicy, Flakes in Oil)", price: 38.00},
+{ id: 6, name: "Afritada Sauce (200g)", price: 35.00},
+{ id: 7, name: "Aji (11g)", price: 5.00},
+{ id: 8, name: "Aji (24g)", price: 10.00},
+{ id: 9, name: "Alaska Classic Condensed", price: 75.00},
+{ id: 10, name: "Alaska Classic Evaporated", price: 65.00},
+{ id: 11, name: "Alaska Evaporada (Big)", price: 40.00},
+{ id: 12, name: "Alaska Evaporada (Small)", price: 24.00},
+{ id: 13, name: "Argentina Corned Beef (100g)", price: 32.00},
+{ id: 14, name: "Argentina Corned Beef (150g)", price: 40.00},
+{ id: 15, name: "Argentina Corned Beef (260g)", price: 62.00},
+{ id: 16, name: "Argentina Giniling (Big)", price: 55.00},
+{ id: 17, name: "Argentina Meat Loaf (Big)", price: 38.00},
+{ id: 18, name: "Argentina Meat Loaf (Small)", price: 26.00},
+{ id: 19, name: "Ariel", price: 17.00},
+{ id: 20, name: "Asukal (Brown)", price: 25.00},
+{ id: 21, name: "Asukal (Washed)", price: 23.00},
+{ id: 22, name: "Asukal (White)", price: 27.00},
+{ id: 23, name: "Baby Powder", price: 0.00},
+{ id: 24, name: "Bath Bar Soap", price: 25.00},
+{ id: 25, name: "Bear Brand (Swak)", price: 15.00},
+{ id: 26, name: "Bigas (50)", price: 50.00},
+{ id: 27, name: "Bigas (55)", price: 55.00},
+{ id: 28, name: "Bingo (Choco)", price: 9.00},
+{ id: 29, name: "Birch Tree", price: 12.00},
+{ id: 30, name: "Bonus", price: 6.00},
+{ id: 31, name: "Breadpan", price: 10.00},
+{ id: 32, name: "Breeze", price: 17.00},
+{ id: 33, name: "Bulak", price: 0.00},
+{ id: 34, name: "Buttercream", price: 8.00},
 { id: 35, name: "C2", price: 18.00},
-{ id: 36, name: "RedHorse (500ml)", price: 68.00},
-{ id: 37, name: "RedHorse (1L)", price: 125.00},
-{ id: 38, name: "Pale Pilsen", price: 48.00},
-{ id: 39, name: "Pale Pilsen (1L)", price: 123.00},
-{ id: 40, name: "San Miguel (Lights)", price: 53.00},
-{ id: 41, name: "San Miguel (Apple)", price: 45.00},
-{ id: 42, name: "Rebisco (Cracker)", price: 8.00},
-{ id: 43, name: "Hansel (Cracker)", price: 8.00},
-{ id: 44, name: "Skyflakes", price: 8.00},
-{ id: 45, name: "Stick Wafer", price: 9.00},
-{ id: 46, name: "Buttercream", price: 8.00},
-{ id: 47, name: "Fita", price: 8.00},
-{ id: 48, name: "Rebisco (Choco)", price: 9.00},
-{ id: 49, name: "Rebisco (Strawberry)", price: 9.00},
-{ id: 50, name: "Combi (Choco)", price: 9.00},
-{ id: 51, name: "Presto (Vanilla)", price: 9.00},
-{ id: 52, name: "Bingo (Choco)", price: 9.00},
-{ id: 53, name: "Hansel (Choco)", price: 9.00},
-{ id: 54, name: "Hansel (Mocha)", price: 9.00},
+{ id: 36, name: "Caldereta Sauce (200g)", price: 35.00},
+{ id: 37, name: "Calla", price: 17.00},
+{ id: 38, name: "Camel", price: 8.00},
+{ id: 39, name: "Candy", price: 2.00},
+{ id: 40, name: "Carefree", price: 5.00},
+{ id: 41, name: "CDO Chinese Style (Big)", price: 95.00},
+{ id: 42, name: "CDO Chinese Style (Small)", price: 48.00},
+{ id: 43, name: "CDO Karne Norte (100g)", price: 26.00},
+{ id: 44, name: "CDO Karne Norte (150g)", price: 36.00},
+{ id: 45, name: "CDO Karne Norte (260g)", price: 55.00},
+{ id: 46, name: "CDO Meat Loaf (Big)", price: 36.00},
+{ id: 47, name: "CDO Meat Loaf (Small)", price: 26.00},
+{ id: 48, name: "Century Tuna (Flat)", price: 53.00},
+{ id: 49, name: "Century Tuna (Smallest)", price: 32.00},
+{ id: 50, name: "Century Tuna (Tall)", price: 42.00},
+{ id: 51, name: "Champion (Big)", price: 17.00},
+{ id: 52, name: "Champion (Small)", price: 9.00},
+{ id: 53, name: "Champion, Surf, Speed (Bar)", price: 15.00},
+{ id: 54, name: "Charmee", price: 5.00},
 { id: 55, name: "Cheesecake", price: 11.00},
-{ id: 56, name: "WhattaTops (Strawberry)", price: 11.00},
-{ id: 57, name: "WhattaTops (Vanilla)", price: 11.00},
-{ id: 58, name: "WhattaTops (Cookies & Cream)", price: 11.00},
-{ id: 59, name: "Doowee Donut", price: 13.00},
-{ id: 60, name: "FudgeeBar (Choco)", price: 11.00},
-{ id: 61, name: "FudgeeBar (Macapuno)", price: 11.00},
-{ id: 62, name: "Overload (Mocha Butter)", price: 11.00},
-{ id: 63, name: "Quake (Choco)", price: 11.00},
-{ id: 64, name: "Lava Cake (Matcha)", price: 11.00},
-{ id: 65, name: "ChocoMucho (Choco)", price: 10.00},
-{ id: 66, name: "ChocoMucho (White Choco)", price: 10.00},
-{ id: 67, name: "Presto (Peanut)", price: 10.00},
-{ id: 68, name: "Cream-O (Vanilla)", price: 10.00},
-{ id: 69, name: "Cream-O (Choco)", price: 10.00},
-{ id: 70, name: "Oreo (Vanilla)", price: 11.00},
-{ id: 71, name: "Oreo (Choco)", price: 11.00},
-{ id: 72, name: "Marlboro", price: 10.00},
-{ id: 73, name: "Fortune", price: 9.00},
-{ id: 74, name: "Mighty", price: 9.00},
-{ id: 75, name: "Camel", price: 8.00},
-{ id: 76, name: "Winston", price: 10.00},
-{ id: 77, name: "Chesterfield", price: 7.00},
-{ id: 78, name: "Bonus", price: 6.00},
-{ id: 79, name: "Memphis", price: 6.00},
-{ id: 80, name: "Asukal (White)", price: 0.00},
-{ id: 81, name: "Asukal (Washed)", price: 0.00},
-{ id: 82, name: "Asukal (Brown)", price: 0.00},
-{ id: 83, name: "Great Taste (20g)", price: 0.00},
-{ id: 84, name: "Nescafe (25g)", price: 0.00},
-{ id: 85, name: "Aji (11g)", price: 5.00},
-{ id: 86, name: "Aji (24g)", price: 0.00},
-{ id: 87, name: "Eden (Box)", price: 60.00},
-{ id: 88, name: "Eden (Sachet)", price: 20.00},
-{ id: 89, name: "Coco Mama", price: 39.00},
-{ id: 90, name: "Ramen", price: 16.00},
-{ id: 91, name: "Ram Tomato Paste (70g)", price: 18.00},
-{ id: 92, name: "Del Monte Tomato Paste (150g)", price: 38.00},
-{ id: 93, name: "Tomato Sauce Original (115g)", price: 23.00},
-{ id: 94, name: "Tomato Sauce Original (200g)", price: 28.00},
-{ id: 95, name: "Tomato Sauce Original (250g)", price: 33.00},
-{ id: 96, name: "Caldereta Sauce (200g)", price: 35.00},
-{ id: 97, name: "Afritada Sauce (200g)", price: 35.00},
-{ id: 98, name: "Tasty Boy (65g)", price: 15.00},
-{ id: 99, name: "Crispy Fry (62g)", price: 20.00},
-{ id: 100, name: "Shampoo", price: 8.00},
-{ id: 101, name: "Conditioner", price: 10.00},
-{ id: 102, name: "Toothpaste", price: 12.00},
-{ id: 103, name: "Downy ", price: 9.00},
-{ id: 104, name: "Downy Perfume", price: 12.00},
-{ id: 105, name: "Iodised Salt", price: 0.00},
-{ id: 106, name: "Lucky Me", price: 0.00},
-{ id: 107, name: "Lucky Me (Spicy)", price: 0.00},
-{ id: 108, name: "Pancit Canton", price: 0.00},
-{ id: 109, name: "Xtra Big", price: 0.00},
-{ id: 110, name: "Pasta Express", price: 0.00},
-{ id: 111, name: "Yakisoba", price: 0.00},
-{ id: 112, name: "Bath Bar Soap", price: 0.00},
-{ id: 113, name: "Sisters", price: 0.00},
-{ id: 114, name: "Charmee", price: 0.00},
-{ id: 115, name: "Modess", price: 0.00},
-{ id: 116, name: "Whisper", price: 0.00},
-{ id: 117, name: "Carefree", price: 0.00},
-{ id: 118, name: "Femme Tissue", price: 0.00},
-{ id: 119, name: "Reach Tissue", price: 0.00},
-{ id: 120, name: "Pocket Tissue", price: 0.00},
-{ id: 121, name: "Baby Powder", price: 0.00},
-{ id: 122, name: "Bulak", price: 0.00},
-{ id: 123, name: "Champion, Surf, Speed (Bar)", price: 0.00},
-{ id: 124, name: "Pride (Bar)", price: 0.00},
-{ id: 125, name: "Todotipid", price: 0.00},
-{ id: 126, name: "Perla", price: 0.00},
-{ id: 127, name: "Breeze", price: 0.00},
-{ id: 128, name: "Ariel", price: 0.00},
-{ id: 129, name: "Tide", price: 0.00},
-{ id: 130, name: "Calla", price: 0.00},
-{ id: 131, name: "Surf", price: 0.00},
-{ id: 132, name: "Champion (Small)", price: 0.00},
-{ id: 133, name: "Champion (Big)", price: 0.00},
-{ id: 134, name: "Alaska Classic Condensed", price: 0.00},
-{ id: 135, name: "Cow Bell Condense", price: 0.00},
-{ id: 136, name: "Master Chef Condensada", price: 0.00},
-{ id: 137, name: "Alaska Classic Evaporated", price: 0.00},
-{ id: 138, name: "Alaska Evaporada (Big)", price: 0.00},
-{ id: 139, name: "Alaska Evaporada (Small)", price: 0.00},
-{ id: 140, name: "UFC Ketchup (Bottle)", price: 0.00},
-{ id: 141, name: "UFC Tamis Anghang (Bottle)", price: 0.00},
-{ id: 142, name: "Del Monte Ketchup", price: 0.00},
-{ id: 143, name: "Mang Tomas Siga", price: 0.00},
-{ id: 144, name: "Mang Tomas", price: 0.00},
-{ id: 145, name: "Suka (Bottle)", price: 0.00},
-{ id: 146, name: "Patis (White, Bottle)", price: 0.00},
-{ id: 147, name: "Patis (Orange, Bottle)", price: 0.00},
-{ id: 148, name: "Toyo (Bottle)", price: 0.00},
-{ id: 149, name: "Pineapple Juice (Big)", price: 0.00},
-{ id: 150, name: "Saba Mackerel  (White, Small)", price: 0.00},
-{ id: 151, name: "Saba Mackerel (White, Big)", price: 0.00},
-{ id: 152, name: "Saba Mackerel (Yellow, Small)", price: 0.00},
-{ id: 153, name: "Saba Mackerel (Yellow, Big)", price: 0.00},
-{ id: 154, name: "Fried Sardines", price: 0.00},
-{ id: 155, name: "Saba Squid", price: 0.00},
-{ id: 156, name: "Tiga Bunga Squid", price: 0.00},
-{ id: 157, name: "Mega Squid", price: 0.00},
-{ id: 158, name: "Mega Squid Spicy", price: 0.00},
-{ id: 159, name: "Ligo (Big)", price: 0.00},
-{ id: 160, name: "Ligo (Small)", price: 0.00},
-{ id: 161, name: "Young’s Town", price: 0.00},
-{ id: 162, name: "Saba Sardines", price: 0.00},
-{ id: 163, name: "555 Sardines", price: 0.00},
-{ id: 164, name: "Mega Sardines", price: 0.00},
-{ id: 165, name: "Argentina Corned Beef", price: 0.00},
-{ id: 166, name: "Argentina Corned Beef", price: 0.00},
-{ id: 167, name: "Argentina Corned Beef", price: 0.00},
-{ id: 168, name: "CDO Karne Norte", price: 0.00},
-{ id: 169, name: "Lucky 7 Carne Norte", price: 0.00},
-{ id: 170, name: "Purefoods Corned Beef (Small)", price: 0.00},
-{ id: 171, name: "Purefoods Corned Beef (Big)", price: 0.00},
-{ id: 172, name: "Purefoods Sisig", price: 0.00},
-{ id: 173, name: "Argentina Giniling (Big)", price: 0.00},
-{ id: 174, name: "Liver Spread", price: 0.00},
-{ id: 175, name: "Liver Spread Spicy", price: 0.00},
-{ id: 176, name: "Ram Pork & Beans", price: 0.00},
+{ id: 56, name: "Chesterfield", price: 7.00},
+{ id: 57, name: "Chichirya", price: 10.00},
+{ id: 58, name: "Chippy (Big)", price: 28.00},
+{ id: 59, name: "Choco/Strawberrt Knots, Pretzels", price: 10.00},
+{ id: 60, name: "ChocoMucho", price: 10.00},
+{ id: 61, name: "Chuckie (Big)", price: 28.00},
+{ id: 62, name: "Chuckie (Small)", price: 18.00},
+{ id: 63, name: "Coarse Iodized Salt", price: 10.00},
+{ id: 64, name: "Cobra", price: 22.00},
+{ id: 65, name: "Coco Mama", price: 39.00},
+{ id: 66, name: "Coke (1.5)", price: 73.00},
+{ id: 67, name: "Coke (8oz)", price: 14.00},
+{ id: 68, name: "Coke (Kasalo)", price: 34.00},
+{ id: 69, name: "Coke (Mismo)", price: 23.00},
+{ id: 70, name: "Combi (Choco)", price: 9.00},
+{ id: 71, name: "Conditioner", price: 10.00},
+{ id: 72, name: "Cow Bell Condense", price: 50.00},
+{ id: 73, name: "Cream-O", price: 10.00},
+{ id: 74, name: "Crispy Fry (62g)", price: 20.00},
+{ id: 75, name: "Del Monte Ketchup", price: 53.00},
+{ id: 76, name: "Del Monte Tomato Paste (150g)", price: 38.00},
+{ id: 77, name: "Delight", price: 13.00},
+{ id: 78, name: "DingDong (Big)", price: 0.00},
+{ id: 79, name: "DingDong (Small)", price: 0.00},
+{ id: 80, name: "Doowee Donut", price: 13.00},
+{ id: 81, name: "Downy ", price: 9.00},
+{ id: 82, name: "Downy Perfume", price: 12.00},
+{ id: 83, name: "Dutchmill (Big)", price: 26.00},
+{ id: 84, name: "Dutchmill (Small)", price: 15.00},
+{ id: 85, name: "Eden (Box)", price: 60.00},
+{ id: 86, name: "Eden (Sachet)", price: 20.00},
+{ id: 87, name: "Energen", price: 0.00},
+{ id: 88, name: "Femme Tissue", price: 15.00},
+{ id: 89, name: "Fita", price: 8.00},
+{ id: 90, name: "Fortune", price: 9.00},
+{ id: 91, name: "Fried Sardines", price: 40.00},
+{ id: 92, name: "FudgeeBar", price: 11.00},
+{ id: 93, name: "Great Taste (20g)", price: 0.00},
+{ id: 94, name: "Hansel (Choco/Mocha)", price: 9.00},
+{ id: 95, name: "Hansel (Cracker)", price: 8.00},
+{ id: 96, name: "Iodized Salt", price: 15.00},
+{ id: 97, name: "Itlog", price: 10.00},
+{ id: 98, name: "Kape (Single)", price: 11.00},
+{ id: 99, name: "Kape (Twin)", price: 16.00},
+{ id: 100, name: "Lava Cake", price: 11.00},
+{ id: 101, name: "Ligo Sardines (Big)", price: 68.00},
+{ id: 102, name: "Ligo Sardines (Small)", price: 30.00},
+{ id: 103, name: "Liver Spread", price: 0.00},
+{ id: 104, name: "Liver Spread Spicy", price: 35.00},
+{ id: 105, name: "Loaded", price: 10.00},
+{ id: 106, name: "Lucky 7 Carne Norte (100g)", price: 20.00},
+{ id: 107, name: "Lucky 7 Carne Norte (150g)", price: 28.00},
+{ id: 108, name: "Lucky 7 Carne Norte (210g)", price: 37.00},
+{ id: 109, name: "Lucky Me", price: 12.00},
+{ id: 110, name: "Lucky Me (Spicy)", price: 13.00},
+{ id: 111, name: "Mang Juan (Big)", price: 28.00},
+{ id: 112, name: "Mang Tomas", price: 43.00},
+{ id: 113, name: "Mang Tomas Siga", price: 43.00},
+{ id: 114, name: "Mantika", price: 35.00},
+{ id: 115, name: "Marca Piña (Big, Bottle)", price: 0.00},
+{ id: 116, name: "Marca Piña (Small, Bottle)", price: 45.00},
+{ id: 117, name: "Marlboro", price: 10.00},
+{ id: 118, name: "Master Chef Condensada", price: 45.00},
+{ id: 119, name: "Mega Sardines", price: 30.00},
+{ id: 120, name: "Mega Squid", price: 48.00},
+{ id: 121, name: "Mega Squid Spicy", price: 48.00},
+{ id: 122, name: "Memphis", price: 6.00},
+{ id: 123, name: "Mighty", price: 9.00},
+{ id: 124, name: "Milo (Single)", price: 11.00},
+{ id: 125, name: "Milo (Twin)", price: 0.00},
+{ id: 126, name: "Modess", price: 7.00},
+{ id: 127, name: "Mr Chrips (Big)", price: 28.00},
+{ id: 128, name: "Mt. Dew (12oz)", price: 20.00},
+{ id: 129, name: "Mt. Dew (8oz)", price: 14.00},
+{ id: 130, name: "Mt. Dew (Kasalo)", price: 34.00},
+{ id: 131, name: "Nescafe (25g)", price: 27.00},
+{ id: 132, name: "Nescafe stick", price: 5.00},
+{ id: 133, name: "Nova (Big)", price: 40.00},
+{ id: 134, name: "Nova (Small)", price: 22.00},
+{ id: 135, name: "Oreo", price: 11.00},
+{ id: 136, name: "Overload", price: 11.00},
+{ id: 137, name: "Pale Pilsen", price: 48.00},
+{ id: 138, name: "Pale Pilsen (1L)", price: 123.00},
+{ id: 139, name: "Pancake", price: 0.00},
+{ id: 140, name: "Pancit Canton", price: 17.00},
+{ id: 141, name: "Pasta Express", price: 17.00},
+{ id: 142, name: "Patis (Orange, Bottle)", price: 0.00},
+{ id: 143, name: "Patis (White, Bottle)", price: 36.00},
+{ id: 144, name: "Perla", price: 20.00},
+{ id: 145, name: "Piattos (Big)", price: 40.00},
+{ id: 146, name: "Piattos (Small)", price: 20.00},
+{ id: 147, name: "Pillows", price: 12.00},
+{ id: 148, name: "Pineapple Juice", price: 36.00},
+{ id: 149, name: "Pineapple Juice (Big)", price: 140.00},
+{ id: 150, name: "Plus", price: 13.00},
+{ id: 151, name: "Pocket Tissue", price: 10.00},
+{ id: 152, name: "Presto (Peanut)", price: 10.00},
+{ id: 153, name: "Presto (Vanilla)", price: 9.00},
+{ id: 154, name: "Pride (Bar)", price: 10.00},
+{ id: 155, name: "Purefoods Chinese Style (Big)", price: 0.00},
+{ id: 156, name: "Purefoods Chinese Style (Small)", price: 0.00},
+{ id: 157, name: "Purefoods Corned Beef (Big)", price: 120.00},
+{ id: 158, name: "Purefoods Corned Beef (Small)", price: 90.00},
+{ id: 159, name: "Purefoods Luncheon Meat", price: 108.00},
+{ id: 160, name: "Purefoods Sisig", price: 50.00},
+{ id: 161, name: "Quake", price: 11.00},
+{ id: 162, name: "Ram Pork & Beans", price: 25.00},
+{ id: 163, name: "Ram Tomato Paste (70g)", price: 18.00},
+{ id: 164, name: "Ramen", price: 16.00},
+{ id: 165, name: "Reach Tissue", price: 15.00},
+{ id: 166, name: "Rebisco (Choco/Strawberry)", price: 9.00},
+{ id: 167, name: "Rebisco (Cracker)", price: 8.00},
+{ id: 168, name: "RedHorse (1L)", price: 125.00},
+{ id: 169, name: "RedHorse (500ml)", price: 68.00},
+{ id: 170, name: "Royal (1.5)", price: 73.00},
+{ id: 171, name: "Royal (8oz)", price: 14.00},
+{ id: 172, name: "Royal (Kasalo)", price: 34.00},
+{ id: 173, name: "Royal (Mismo)", price: 23.00},
+{ id: 174, name: "Saba Mackerel  (White, Small)", price: 43.00},
+{ id: 175, name: "Saba Mackerel (White, Big)", price: 85.00},
+{ id: 176, name: "Saba Mackerel (Yellow, Big)", price: 85.00},
+{ id: 177, name: "Saba Mackerel (Yellow, Small)", price: 42.00},
+{ id: 178, name: "Saba Sardines", price: 28.00},
+{ id: 179, name: "Saba Squid", price: 55.00},
+{ id: 180, name: "San Marino (Flat)", price: 55.00},
+{ id: 181, name: "San Marino (Smallest)", price: 36.00},
+{ id: 182, name: "San Marino (Tall)", price: 44.00},
+{ id: 183, name: "San Miguel (Apple)", price: 45.00},
+{ id: 184, name: "San Miguel (Lights)", price: 53.00},
+{ id: 185, name: "Shampoo", price: 8.00},
+{ id: 186, name: "Sisters", price: 10.00},
+{ id: 187, name: "Skyflakes", price: 8.00},
+{ id: 188, name: "Sprite (1.5)", price: 73.00},
+{ id: 189, name: "Sprite (8oz)", price: 14.00},
+{ id: 190, name: "Sprite (Kasalo)", price: 34.00},
+{ id: 191, name: "Sprite (Mismo)", price: 23.00},
+{ id: 192, name: "Sterilized", price: 32.00},
+{ id: 193, name: "Stick Wafer", price: 9.00},
+{ id: 194, name: "Sting", price: 22.00},
+{ id: 195, name: "Suka (Bottle)", price: 22.00},
+{ id: 196, name: "Surf", price: 9.00},
+{ id: 197, name: "Tasty Boy (65g)", price: 15.00},
+{ id: 198, name: "Tide", price: 17.00},
+{ id: 199, name: "TigaBunga Squid", price: 50.00},
+{ id: 200, name: "Todotipid", price: 17.00},
+{ id: 201, name: "Tomato Sauce Original (115g)", price: 23.00},
+{ id: 202, name: "Tomato Sauce Original (200g)", price: 28.00},
+{ id: 203, name: "Tomato Sauce Original (250g)", price: 33.00},
+{ id: 204, name: "Toothpaste", price: 12.00},
+{ id: 205, name: "Torillos (Big)", price: 28.00},
+{ id: 206, name: "Toyo (Bottle)", price: 24.00},
+{ id: 207, name: "Tubig (500ml)", price: 10.00},
+{ id: 208, name: "Tubig (750ml)", price: 15.00},
+{ id: 209, name: "Tuyo/Dilis", price: 10.00},
+{ id: 210, name: "UFC Ketchup (Bottle)", price: 32.00},
+{ id: 211, name: "UFC Sweet Chili", price: 48.00},
+{ id: 212, name: "UFC Tamis Anghang (Bottle)", price: 40.00},
+{ id: 213, name: "V-Cut (Big)", price: 41.00},
+{ id: 214, name: "V-Cut (Small)", price: 22.00},
+{ id: 215, name: "WhattaTops", price: 11.00},
+{ id: 216, name: "Whisper", price: 7.00},
+{ id: 217, name: "Winston", price: 10.00},
+{ id: 218, name: "Xtra Big", price: 21.00},
+{ id: 219, name: "Yakisoba", price: 16.00},
+{ id: 220, name: "Yakult", price: 13.00},
+{ id: 221, name: "Young’s Town", price: 27.00},
         ];
 
         var cart = [];
         var globalTotal = 0;
+        var currentLetterFilter = "ALL"; // Tracks active letter selection
+
+        // --- GENERATE ALPHABET BAR DYNAMICALLY ---
+        function setupAlphabetFilter() {
+            var filterBar = document.getElementById("alphabetFilterBar");
+            filterBar.innerHTML = "";
+
+            // Create ALL Button
+            var allBtn = document.createElement("button");
+            allBtn.className = "alphabet-btn active";
+            allBtn.id = "btn-all";
+            allBtn.innerText = "ALL";
+            allBtn.onclick = function() { setLetterFilter("ALL"); };
+            filterBar.appendChild(allBtn);
+
+            // Create Number Button (#)
+            var numBtn = document.createElement("button");
+            numBtn.className = "alphabet-btn";
+            numBtn.id = "btn-num";
+            numBtn.innerText = "#";
+            numBtn.onclick = function() { setLetterFilter("#"); };
+            filterBar.appendChild(numBtn);
+
+            // Create A-Z Buttons
+            var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (var i = 0; i < alphabet.length; i++) {
+                var letter = alphabet[i];
+                var btn = document.createElement("button");
+                btn.className = "alphabet-btn";
+                btn.id = "btn-" + letter.toLowerCase();
+                btn.innerText = letter;
+                (function(l) {
+                    btn.onclick = function() { setLetterFilter(l); };
+                })(letter);
+                filterBar.appendChild(btn);
+            }
+        }
+
+        function setLetterFilter(letter) {
+            currentLetterFilter = letter;
+            
+            // Manage active dynamic CSS classes
+            var buttons = document.getElementsByClassName("alphabet-btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            
+            if (letter === "ALL") {
+                document.getElementById("btn-all").classList.add("active");
+            } else if (letter === "#") {
+                document.getElementById("btn-num").classList.add("active");
+            } else {
+                document.getElementById("btn-" + letter.toLowerCase()).classList.add("active");
+            }
+
+            // Run shared matching engine logic
+            filterProducts();
+        }
 
         function renderCatalog(items) {
             var grid = document.getElementById("productsGrid");
@@ -529,9 +668,28 @@
         function filterProducts() {
             var query = document.getElementById("searchBar").value.toLowerCase();
             var filtered = [];
+            
             for (var i = 0; i < productsData.length; i++) {
-                if (productsData[i].name.toLowerCase().indexOf(query) !== -1) {
-                    filtered.push(productsData[i]);
+                var item = productsData[i];
+                var nameLower = item.name.toLowerCase();
+                
+                // 1. Text Search Input Filter match Check
+                var matchesSearch = nameLower.indexOf(query) !== -1;
+                
+                // 2. Alphabet Bar Check
+                var matchesLetter = false;
+                if (currentLetterFilter === "ALL") {
+                    matchesLetter = true;
+                } else if (currentLetterFilter === "#") {
+                    // Check if first character is a raw number digit
+                    var firstChar = nameLower.charAt(0);
+                    matchesLetter = (firstChar >= '0' && firstChar <= '9');
+                } else {
+                    matchesLetter = nameLower.indexOf(currentLetterFilter.toLowerCase()) === 0;
+                }
+
+                if (matchesSearch && matchesLetter) {
+                    filtered.push(item);
                 }
             }
             renderCatalog(filtered);
@@ -557,17 +715,15 @@
 
             if (!product) return;
 
-            // If it is "Others", skip search check and always force push a separate distinct card line
             if (product.name.toLowerCase() === "others") {
                 cart.push({
-                    cartItemId: Date.now() + Math.random(), // Unique tracking ID for multiple "Others"
+                    cartItemId: Date.now() + Math.random(), 
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     qty: 1.00
                 });
             } else {
-                // Regular calculation loop checks for generic duplicated item stacking
                 var found = false;
                 for (var i = 0; i < cart.length; i++) {
                     if (cart[i].id === id) {
@@ -578,7 +734,7 @@
                 }
                 if (!found) {
                     cart.push({
-                        cartItemId: product.id, // Regular entries just map straight to product ID
+                        cartItemId: product.id, 
                         id: product.id,
                         name: product.name,
                         price: product.price,
@@ -723,8 +879,8 @@
         }
 
         window.onload = function() {
+            setupAlphabetFilter();
             renderCatalog(productsData);
         };
     </script>
 </body>
-</html>
